@@ -34,6 +34,8 @@ export interface AttendanceAnomaly {
   date: string
   status: "absent" | "late"
   reason?: string
+  needsAction: boolean
+  hasNote: boolean
 }
 
 export interface CalendarCellData {

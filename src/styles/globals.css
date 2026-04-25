@@ -1,29 +1,254 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-app-sans);
+  --font-heading: var(--font-app-heading);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-success: var(--status-success);
+  --color-warning: var(--status-warning);
+  --color-danger: var(--status-danger);
+  --color-surface: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+}
 
 :root {
-  --color-primary: #4f46e5;
-  --color-success: #16a34a;
-  --color-warning: #f59e0b;
-  --color-danger: #dc2626;
-  --color-muted: #6b7280;
-  --color-surface: #ffffff;
-  --color-foreground: #111827;
-  --color-border: #e5e7eb;
+  /* primitive brand tokens: update these first */
+  --brand-primary: #4f46e5;
+  --brand-primary-soft: #eef2ff;
+  --brand-accent: #aa3bff;
+  --neutral-0: #ffffff;
+  --neutral-50: #f8fafc;
+  --neutral-200: #e5e7eb;
+  --neutral-500: #6b7280;
+  --neutral-900: #111827;
+  --success-600: #16a34a;
+  --warning-500: #f59e0b;
+  --danger-600: #dc2626;
+
+  /* semantic tokens used by shadcn + app classes */
+  --background: var(--neutral-0);
+  --foreground: var(--neutral-900);
+  --card: var(--neutral-0);
+  --card-foreground: var(--neutral-900);
+  --popover: var(--neutral-0);
+  --popover-foreground: var(--neutral-900);
+  --primary: var(--brand-primary);
+  --primary-foreground: #ffffff;
+  --secondary: var(--neutral-50);
+  --secondary-foreground: var(--neutral-900);
+  --muted: var(--neutral-50);
+  --muted-foreground: var(--neutral-500);
+  --accent: var(--brand-primary-soft);
+  --accent-foreground: var(--brand-primary);
+  --destructive: var(--danger-600);
+  --border: var(--neutral-200);
+  --input: var(--neutral-200);
+  --ring: color-mix(in srgb, var(--brand-primary) 45%, transparent);
+  --status-success: var(--success-600);
+  --status-warning: var(--warning-500);
+  --status-danger: var(--danger-600);
+  --radius: 0.75rem;
+  --font-app-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-app-heading: var(--font-app-sans);
 }
 
-* {
-  box-sizing: border-box;
+.dark {
+  --background: #16171d;
+  --foreground: #f3f4f6;
+  --card: #1f2028;
+  --card-foreground: #f3f4f6;
+  --popover: #1f2028;
+  --popover-foreground: #f3f4f6;
+  --primary: #c084fc;
+  --primary-foreground: #120a1c;
+  --secondary: #2e303a;
+  --secondary-foreground: #f3f4f6;
+  --muted: #2e303a;
+  --muted-foreground: #9ca3af;
+  --accent: color-mix(in srgb, var(--brand-accent) 18%, transparent);
+  --accent-foreground: #f3e8ff;
+  --destructive: #f87171;
+  --border: #2e303a;
+  --input: #2e303a;
+  --ring: color-mix(in srgb, var(--primary) 45%, transparent);
 }
 
-body {
-  margin: 0;
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  color: var(--color-foreground);
-  background: #f8fafc;
+@layer base {
+  * {
+    box-sizing: border-box;
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    height: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    @apply font-sans;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100%;
+    min-height: 100dvh;
+    -webkit-tap-highlight-color: transparent;
+    @apply bg-background text-foreground;
+  }
+
+  #root {
+    min-height: 100%;
+    min-height: 100dvh;
+  }
 }
 
-#root {
-  min-height: 100vh;
+@layer components {
+  .app-layout-root { @apply min-h-dvh bg-background; }
+  .app-layout-shell { @apply mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-background; }
+  .app-layout-header { @apply px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))]; }
+  .app-layout-header-row { @apply flex items-center justify-between gap-3; }
+  .app-layout-logo { @apply h-6 w-auto shrink-0; }
+  .app-layout-profile { @apply min-w-0 flex items-center justify-end gap-2; }
+  .app-layout-profile-info { @apply min-w-0 max-w-32 text-right leading-tight; }
+  .app-layout-profile-name { @apply truncate text-sm font-semibold text-foreground; }
+  .app-layout-profile-byline { @apply mt-0.5 truncate text-xs text-muted; }
+  .app-layout-profile-photo { @apply h-10 w-10 shrink-0 rounded-lg object-cover ring-1 ring-border; }
+  .app-layout-divider { @apply border-b border-border; }
+  .app-layout-main { @apply flex-1 overflow-y-auto overscroll-y-contain px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]; }
+
+  .page-title { @apply mb-3; }
+  .page-title-heading { @apply text-[1.0625rem] leading-snug font-semibold text-foreground; }
+  .page-title-subtitle { @apply mt-1 text-[0.8125rem] leading-relaxed text-muted; }
+
+  .section-tabs-nav { @apply -mx-4 mb-3 flex overflow-x-auto px-4 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden; }
+  .section-tabs-list { @apply flex min-w-max gap-2; }
+  .section-tabs-link { @apply inline-flex h-8 shrink-0 items-center justify-center rounded-full border border-border bg-background px-3 text-[0.8125rem] font-medium text-muted transition-colors; }
+  .section-tabs-link[data-active="true"] { @apply border-primary bg-primary text-primary-foreground shadow-[0_4px_12px_rgba(79,70,229,0.28)]; }
+
+  .attendance-section-loading { @apply mb-3 text-[0.8125rem] text-muted; }
+  .attendance-section-grid { @apply grid gap-5; }
+  .attendance-section-stack { @apply space-y-5; }
+
+  .attendance-header { @apply mb-3 space-y-3; }
+  .attendance-header-title { @apply text-[0.75rem] font-semibold uppercase tracking-wide text-muted; }
+  .attendance-header-row { @apply grid grid-cols-3 items-center; }
+  .attendance-header-nav-cell { @apply flex; }
+  .attendance-header-nav-cell-left { @apply justify-start; }
+  .attendance-header-nav-cell-right { @apply justify-end; }
+  .attendance-header-month { @apply text-center text-[0.8125rem] font-medium text-muted; }
+  .attendance-header-icon { @apply h-4 w-4; }
+
+  .attendance-calendar { @apply px-2 py-2; }
+  .attendance-calendar-day-header-row { @apply mb-3 grid grid-cols-7 gap-2; }
+  .attendance-calendar-day-header { @apply text-center text-[0.6875rem] font-semibold uppercase tracking-wide text-muted; }
+  .calendar-grid { @apply space-y-2; }
+  .calendar-row { @apply grid grid-cols-7 gap-2; }
+  .calendar-cell-button { @apply flex h-14 w-full touch-manipulation flex-col items-center justify-center gap-1 rounded-xl bg-card p-1.5 text-sm font-medium transition active:scale-[0.97]; }
+  .calendar-cell-status-present { @apply bg-green-100; }
+  .calendar-cell-status-absent { @apply bg-red-100; }
+  .calendar-cell-status-late { @apply bg-amber-100; }
+  .calendar-cell-status-none { @apply bg-transparent; }
+  .calendar-cell-outside-month { @apply opacity-35; }
+  .calendar-cell-today { @apply border-2 border-primary bg-primary/5; }
+  .calendar-cell-disabled { @apply cursor-not-allowed opacity-60 active:scale-100; }
+  .calendar-cell-day { @apply text-sm; }
+  .calendar-cell-day-present { @apply text-green-900; }
+  .calendar-cell-day-absent { @apply text-red-900; }
+  .calendar-cell-day-late { @apply text-amber-900; }
+  .calendar-cell-day-muted { @apply text-gray-400; }
+  .calendar-cell-day-subtle { @apply text-gray-300; }
+  .calendar-cell-icon { @apply h-4 w-4 shrink-0; }
+  .calendar-cell-icon-present { @apply text-green-600; }
+  .calendar-cell-icon-absent { @apply text-red-600; }
+  .calendar-cell-icon-late { @apply text-amber-500; }
+  .calendar-cell-icon-muted { @apply text-gray-400; }
+  .calendar-cell-icon-subtle { @apply text-gray-300; }
+
+  .attendance-summary { @apply space-y-3 border-b border-border/50 pb-4; }
+  .attendance-summary-title { @apply text-[0.75rem] font-semibold uppercase tracking-wide text-muted; }
+  .attendance-summary-chips { @apply flex flex-wrap gap-1.5 text-[0.75rem]; }
+  .attendance-summary-chip { @apply rounded-full px-2.5 py-1 font-medium; }
+  .attendance-summary-chip-present { @apply bg-green-50 text-green-600; }
+  .attendance-summary-chip-absent { @apply bg-red-50 text-red-700; }
+  .attendance-summary-chip-late { @apply bg-amber-50 text-amber-700; }
+  .attendance-summary-progress { @apply flex h-1.5 overflow-hidden rounded-full bg-muted/80; }
+  .attendance-summary-progress-segment { @apply h-full; }
+  .attendance-summary-progress-absent { @apply bg-red-500; }
+  .attendance-summary-progress-late { @apply bg-amber-500; }
+  .attendance-summary-progress-present { @apply bg-green-500; }
+
+  .attendance-anomalies { @apply bg-background; }
+  .attendance-anomalies-title { @apply mb-3 text-[0.75rem] font-semibold uppercase tracking-wide text-muted; }
+  .attendance-anomalies-empty { @apply text-[0.8125rem] text-muted; }
+  .attendance-anomalies-list { @apply space-y-3; }
+  .attendance-anomalies-item { @apply flex min-h-11 items-start justify-between gap-3 rounded-lg border border-border/60 px-3 py-2 text-[0.8125rem]; }
+  .attendance-anomalies-item-left { @apply flex flex-col gap-0.5; }
+  .attendance-anomalies-item-right { @apply flex flex-col items-end gap-1 text-right; }
+  .attendance-anomalies-date { @apply font-medium text-foreground; }
+  .attendance-anomalies-status { @apply capitalize text-muted; }
+  .attendance-anomalies-action-note { @apply text-muted; }
+  .attendance-anomalies-action-link { @apply text-[0.75rem] font-medium text-primary underline-offset-2 hover:underline; }
+  .attendance-anomalies-action-success { @apply text-[0.75rem] font-medium text-green-700; }
+  .attendance-anomalies-action-info { @apply text-[0.75rem] text-muted; }
+
+  .sheet-root { @apply fixed inset-0 z-[1000]; }
+  .sheet-backdrop { @apply absolute inset-0 bg-black/45; }
+  .sheet-content { @apply fixed z-[1001] bg-card p-4 shadow-xl; }
+  .sheet-content-top { @apply inset-x-0 top-0 border-b border-border; }
+  .sheet-content-right { @apply inset-y-0 right-0 h-full w-[90vw] max-w-sm border-l border-border; }
+  .sheet-content-left { @apply inset-y-0 left-0 h-full w-[90vw] max-w-sm border-r border-border; }
+  .sheet-content-bottom { @apply inset-x-0 bottom-0 max-h-[90dvh] overflow-y-auto rounded-t-3xl border-t border-border px-4 pt-5 pb-[calc(1.75rem+env(safe-area-inset-bottom))]; }
+  .attendance-sheet-grabber { @apply mx-auto mb-4 h-1.5 w-12 rounded-full bg-muted; }
+  .attendance-sheet-body { @apply space-y-3 text-sm; }
+  .attendance-sheet-title { @apply text-base font-semibold text-foreground; }
+  .attendance-sheet-grid-two { @apply grid grid-cols-2 gap-2; }
+  .attendance-sheet-data-card { @apply rounded-lg border border-border bg-card p-3; }
+  .attendance-sheet-label { @apply text-xs text-muted; }
+  .attendance-sheet-value { @apply font-medium text-foreground; }
+  .attendance-sheet-value-break { @apply break-words; }
+  .attendance-sheet-capitalize { @apply capitalize; }
+  .attendance-sheet-warning { @apply text-sm text-amber-700; }
+  .attendance-sheet-note-editor { @apply space-y-2 rounded-lg border border-border bg-card p-3; }
+  .attendance-sheet-note-copy { @apply text-sm text-muted; }
+  .attendance-sheet-submitted-note { @apply mt-1 text-sm text-foreground; }
+
+  .screen-card-title { @apply mb-2 text-[0.9375rem] font-semibold text-foreground; }
+  .screen-card-copy { @apply text-[0.8125rem] leading-relaxed text-muted; }
+  .ui-button { @apply inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-transparent bg-primary px-4 py-2.5 text-sm font-medium whitespace-nowrap text-primary-foreground transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0; }
+  .ui-button[data-variant="ghost"] { @apply bg-transparent text-foreground hover:bg-muted; }
+  .ui-card { @apply flex flex-col gap-4 overflow-hidden rounded-xl bg-card py-4 text-sm text-card-foreground ring-1 ring-foreground/10; }
+  .ui-card-header { @apply grid auto-rows-min items-start gap-1 rounded-t-xl px-4; }
+  .ui-card-title { @apply font-heading text-base leading-snug font-medium; }
+  .ui-card-description { @apply text-sm text-muted-foreground; }
+  .ui-card-action { @apply col-start-2 row-span-2 row-start-1 self-start justify-self-end; }
+  .ui-card-content { @apply px-4; }
+  .ui-card-footer { @apply flex items-center rounded-b-xl border-t bg-muted/50 p-4; }
+  .ui-textarea { @apply flex field-sizing-content min-h-16 w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40; }
+  .info-sheet { @apply rounded-xl border border-border bg-muted p-4; }
+  .info-sheet-title { @apply mb-3 text-sm font-semibold uppercase tracking-wide text-muted; }
+  .exams-panel-list { @apply space-y-2; }
+  .exams-panel-item { @apply rounded-lg border border-border p-3; }
+  .exams-panel-subject { @apply text-[0.9375rem] font-medium text-foreground; }
+  .exams-panel-meta { @apply text-[0.8125rem] text-muted; }
 }

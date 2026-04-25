@@ -1,5 +1,4 @@
 import { NavLink } from "react-router-dom"
-import { cn } from "@/lib/utils"
 
 export type ChildTab = "attendance" | "timetable" | "exams" | "badges" | "learn"
 
@@ -17,19 +16,19 @@ const tabConfig: { tab: ChildTab; label: string; path: string }[] = [
 
 export function SectionTabs({ activeTab }: SectionTabsProps) {
   return (
-    <nav className="mb-6 flex flex-wrap gap-2" aria-label="My Child sections">
-      {tabConfig.map((item) => (
-        <NavLink
-          key={item.tab}
-          to={item.path}
-          className={cn(
-            "rounded-full border border-border px-4 py-2 text-sm text-muted",
-            activeTab === item.tab && "border-primary bg-primary text-white",
-          )}
-        >
-          {item.label}
-        </NavLink>
-      ))}
+    <nav className="section-tabs-nav" aria-label="My Child sections">
+      <div className="section-tabs-list">
+        {tabConfig.map((item) => (
+          <NavLink
+            key={item.tab}
+            to={item.path}
+            className="section-tabs-link"
+            data-active={activeTab === item.tab ? "true" : "false"}
+          >
+            {item.label}
+          </NavLink>
+        ))}
+      </div>
     </nav>
   )
 }

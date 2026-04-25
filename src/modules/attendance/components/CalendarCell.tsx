@@ -10,46 +10,46 @@ interface CalendarCellProps {
 interface StatusConfig {
   icon: LucideIcon | null
   iconClassName: string
-  containerClassName: string
+  modifierClassName: string
   dayNumberClassName: string
 }
 
 const statusConfig: Record<CalendarCellData["status"], StatusConfig> = {
   present: {
     icon: Check,
-    iconClassName: "text-green-600",
-    containerClassName: "bg-green-50",
-    dayNumberClassName: "text-green-900",
+    iconClassName: "calendar-cell-icon-present",
+    modifierClassName: "calendar-cell-status-present",
+    dayNumberClassName: "calendar-cell-day-present",
   },
   absent: {
     icon: XCircle,
-    iconClassName: "text-red-600",
-    containerClassName: "bg-red-50",
-    dayNumberClassName: "text-red-900",
+    iconClassName: "calendar-cell-icon-absent",
+    modifierClassName: "calendar-cell-status-absent",
+    dayNumberClassName: "calendar-cell-day-absent",
   },
   late: {
     icon: CircleDot,
-    iconClassName: "text-amber-500",
-    containerClassName: "bg-amber-50",
-    dayNumberClassName: "text-amber-900",
+    iconClassName: "calendar-cell-icon-late",
+    modifierClassName: "calendar-cell-status-late",
+    dayNumberClassName: "calendar-cell-day-late",
   },
   not_marked: {
     icon: null,
-    iconClassName: "text-gray-400",
-    containerClassName: "bg-slate-50",
-    dayNumberClassName: "text-slate-700",
+    iconClassName: "calendar-cell-icon-muted",
+    modifierClassName: "calendar-cell-status-none",
+    dayNumberClassName: "calendar-cell-day-muted",
   },
   holiday: {
     icon: null,
-    iconClassName: "text-gray-300",
-    containerClassName: "bg-slate-100",
-    dayNumberClassName: "text-slate-400",
+    iconClassName: "calendar-cell-icon-subtle",
+    modifierClassName: "calendar-cell-status-none",
+    dayNumberClassName: "calendar-cell-day-subtle",
   },
   weekend: {
     icon: null,
-    iconClassName: "text-gray-300",
-    containerClassName: "bg-slate-100",
-    dayNumberClassName: "text-slate-400",
+    iconClassName: "calendar-cell-icon-subtle",
+    modifierClassName: "calendar-cell-status-none",
+    dayNumberClassName: "calendar-cell-day-subtle",
   },
 }
 
@@ -61,19 +61,21 @@ export function CalendarCell({ cell, onClick }: CalendarCellProps) {
     <button
       type="button"
       disabled={cell.isDisabled}
+      data-current-month={cell.isCurrentMonth ? "true" : "false"}
+      data-today={cell.isToday ? "true" : "false"}
       className={cn(
-        "flex h-20 w-full flex-col items-center justify-center gap-2 rounded-2xl bg-white p-2 text-sm font-medium shadow-sm transition active:scale-95",
-        config.containerClassName,
-        !cell.isCurrentMonth && "opacity-35",
-        cell.isToday && "border border-primary",
-        cell.isDisabled && "cursor-not-allowed opacity-60 active:scale-100",
+        "calendar-cell-button",
+        config.modifierClassName,
+        !cell.isCurrentMonth && "calendar-cell-outside-month",
+        cell.isToday && "calendar-cell-today",
+        cell.isDisabled && "calendar-cell-disabled",
       )}
       onClick={() => onClick(cell)}
     >
-      <span className={cn("text-sm", config.dayNumberClassName)}>
+      <span className={cn("calendar-cell-day", config.dayNumberClassName)}>
         {cell.isCurrentMonth ? cell.dayNumber : ""}
       </span>
-      {Icon ? <Icon className={cn("h-4 w-4", config.iconClassName)} /> : null}
+      {Icon ? <Icon className={cn("calendar-cell-icon", config.iconClassName)} /> : null}
     </button>
   )
 }

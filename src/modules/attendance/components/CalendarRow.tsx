@@ -8,7 +8,7 @@ interface CalendarRowProps {
 
 export function CalendarRow({ row, onCellClick }: CalendarRowProps) {
   return (
-    <div className="grid grid-cols-7 gap-2">
+    <div className="calendar-row">
       {row.map((cell) => (
         <CalendarCell key={cell.date} cell={cell} onClick={onCellClick} />
       ))}

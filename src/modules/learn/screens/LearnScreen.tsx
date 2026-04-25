@@ -3,8 +3,8 @@ import { Card } from "@/design-system/components/Card"
 export function LearnScreen() {
   return (
     <Card>
-      <h3 className="mb-2 text-base font-semibold text-foreground">Learn</h3>
-      <p className="text-sm text-muted">
+      <h3 className="screen-card-title">Learn</h3>
+      <p className="screen-card-copy">
         Learn module scaffold is ready for transition links to LMS content.
       </p>
     </Card>

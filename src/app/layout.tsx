@@ -1,15 +1,53 @@
 import { Outlet } from "react-router-dom"
+import { useActiveChild } from "@/shared/hooks/useActiveChild"
+import { useAppStore } from "@/store/rootStore"
 
 export function AppLayout() {
+  const { activeChildId } = useActiveChild()
+  const activeChild = useAppStore((state) => state.children[activeChildId])
+  const gradeLabel = activeChild
+    ? activeChild.class.toLowerCase().startsWith("grade")
+      ? `${activeChild.class}-${activeChild.section}`
+      : `Grade ${activeChild.class}-${activeChild.section}`
+    : "Loading child profile..."
+  const avatarName = encodeURIComponent(activeChild?.name ?? "Student")
+  const fallbackAvatar = `https://ui-avatars.com/api/?name=${avatarName}&background=EEF2FF&color=4F46E5&size=128&bold=true`
+  const avatarSrc = activeChild?.photoUrl ?? fallbackAvatar
+
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col bg-surface">
-      <header className="border-b border-border px-6 py-4">
-        <p className="text-sm text-muted">Ether App</p>
-        <h1 className="text-xl font-semibold text-foreground">My Child</h1>
-      </header>
-      <main className="flex-1 px-6 py-6">
-        <Outlet />
-      </main>
+    <div className="app-layout-root">
+      <div className="app-layout-shell">
+        <header className="app-layout-header">
+          <div className="app-layout-header-row">
+            <img
+              src="https://framerusercontent.com/images/Pw1TmUA0uMB2XdiOHa8NcGYDD94.png?scale-down-to=512"
+              alt="Ether"
+              className="app-layout-logo"
+            />
+            <div className="app-layout-profile">
+              <div className="app-layout-profile-info">
+                <p className="app-layout-profile-name">
+                  {activeChild?.name ?? "Loading..."}
+                </p>
+                <p className="app-layout-profile-byline">{gradeLabel}</p>
+              </div>
+              <img
+                src={avatarSrc}
+                alt={`${activeChild?.name ?? "Student"} profile`}
+                className="app-layout-profile-photo"
+                loading="lazy"
+                onError={(event) => {
+                  event.currentTarget.src = fallbackAvatar
+                }}
+              />
+            </div>
+          </div>
+        </header>
+        <div className="app-layout-divider" />
+        <main className="app-layout-main">
+          <Outlet />
+        </main>
+      </div>
     </div>
   )
 }

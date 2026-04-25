@@ -34,7 +34,7 @@ export function MyChildScreen({ initialTab = "attendance" }: MyChildScreenProps)
 
   return (
     <section>
-      <PageTitle subtitle={`Active Child: ${activeChildId}`}>My Child Dashboard</PageTitle>
+      <PageTitle>My Child</PageTitle>
       <SectionTabs activeTab={initialTab} />
       {content}
     </section>

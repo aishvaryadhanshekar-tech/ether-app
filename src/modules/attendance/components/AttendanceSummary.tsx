@@ -1,5 +1,3 @@
-import { Card } from "@/design-system/components/Card"
-
 interface AttendanceSummaryProps {
   summary: {
     present: number
@@ -9,23 +7,30 @@ interface AttendanceSummaryProps {
 }
 
 export function AttendanceSummary({ summary }: AttendanceSummaryProps) {
+  const total = summary.present + summary.absent + summary.late
+  const presentPercent = total === 0 ? 0 : Math.round((summary.present / total) * 100)
+  const absentPercent = total === 0 ? 0 : Math.round((summary.absent / total) * 100)
+  const latePercent = total === 0 ? 0 : Math.max(0, 100 - presentPercent - absentPercent)
+
   return (
-    <Card>
-      <h4 className="mb-3 text-sm font-semibold text-foreground">Attendance Summary</h4>
-      <div className="grid grid-cols-3 gap-2 text-center text-sm">
-        <div className="rounded-lg bg-green-50 p-2">
-          <p className="font-semibold text-green-700">{summary.present}</p>
-          <p className="text-xs text-green-700">Present</p>
-        </div>
-        <div className="rounded-lg bg-red-50 p-2">
-          <p className="font-semibold text-red-700">{summary.absent}</p>
-          <p className="text-xs text-red-700">Absent</p>
-        </div>
-        <div className="rounded-lg bg-amber-50 p-2">
-          <p className="font-semibold text-amber-700">{summary.late}</p>
-          <p className="text-xs text-amber-700">Late</p>
-        </div>
+    <div className="attendance-summary">
+      <h4 className="attendance-summary-title">Attendance Summary</h4>
+      <div className="attendance-summary-chips">
+        <span className="attendance-summary-chip attendance-summary-chip-absent">
+          {summary.absent} Absent ({absentPercent}%)
+        </span>
+        <span className="attendance-summary-chip attendance-summary-chip-late">
+          {summary.late} Late ({latePercent}%)
+        </span>
+        <span className="attendance-summary-chip attendance-summary-chip-present">
+          {summary.present} Present ({presentPercent}%)
+        </span>
       </div>
-    </Card>
+      <div className="attendance-summary-progress" aria-hidden="true">
+        <span className="attendance-summary-progress-segment attendance-summary-progress-absent" style={{ width: `${absentPercent}%` }} />
+        <span className="attendance-summary-progress-segment attendance-summary-progress-late" style={{ width: `${latePercent}%` }} />
+        <span className="attendance-summary-progress-segment attendance-summary-progress-present" style={{ width: `${presentPercent}%` }} />
+      </div>
+    </div>
   )
 }

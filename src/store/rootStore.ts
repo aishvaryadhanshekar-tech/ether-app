@@ -1,5 +1,4 @@
 import { create } from "zustand"
-import { persist } from "zustand/middleware"
 import {
   createAttendanceSlice,
   type AttendanceSlice,
@@ -7,7 +6,6 @@ import {
 import type { AttendanceByChild } from "@/modules/attendance/types"
 import { createContextSlice, type ContextSlice } from "@/store/contextStore"
 import { createExamSlice, type ExamsSlice } from "@/modules/exams/store"
-import { persistOptions } from "@/store/persistence"
 import type { Child } from "@/modules/child/types"
 import type { TimetableWeek } from "@/modules/timetable/types"
 import type { Exam, ExamResult } from "@/modules/exams/types"
@@ -26,13 +24,8 @@ export interface AppDataSchema {
 
 export type AppStore = AppDataSchema & ContextSlice & AttendanceSlice & ExamsSlice
 
-export const useAppStore = create<AppStore>()(
-  persist(
-    (...args) => ({
-      ...createContextSlice(...args),
-      ...createAttendanceSlice(...args),
-      ...createExamSlice(...args),
-    }),
-    persistOptions,
-  ),
-)
+export const useAppStore = create<AppStore>()((...args) => ({
+  ...createContextSlice(...args),
+  ...createAttendanceSlice(...args),
+  ...createExamSlice(...args),
+}))

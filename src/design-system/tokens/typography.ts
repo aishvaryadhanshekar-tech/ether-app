@@ -1,6 +1,7 @@
 export const typography = {
   fontFamily: {
-    sans: "Inter, system-ui, sans-serif",
+    sans: 'Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+    heading: 'Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
   },
   fontSize: {
     xs: "0.75rem",

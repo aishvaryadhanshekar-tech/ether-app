@@ -1,4 +1,3 @@
-import { Card } from "@/design-system/components/Card"
 import { CalendarGrid } from "@/modules/attendance/components/CalendarGrid"
 import type { CalendarCellData, CalendarMatrix } from "@/modules/attendance/types"
 
@@ -11,13 +10,15 @@ export function AttendanceCalendar({ matrix, onCellClick }: AttendanceCalendarPr
   const dayHeaders = ["M", "T", "W", "T", "F", "S", "S"] as const
 
   return (
-    <Card>
-      <div className="mb-3 grid grid-cols-7 gap-2 text-center text-xs font-semibold uppercase tracking-wide text-muted">
+    <div className="attendance-calendar">
+      <div className="attendance-calendar-day-header-row">
         {dayHeaders.map((label, index) => (
-          <span key={`${label}-${index}`}>{label}</span>
+          <span key={`${label}-${index}`} className="attendance-calendar-day-header">
+            {label}
+          </span>
         ))}
       </div>
       <CalendarGrid matrix={matrix} onCellClick={onCellClick} />
-    </Card>
+    </div>
   )
 }

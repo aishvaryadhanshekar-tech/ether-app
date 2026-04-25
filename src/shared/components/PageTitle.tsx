@@ -6,9 +6,9 @@ interface PageTitleProps extends PropsWithChildren {
 
 export function PageTitle({ subtitle, children }: PageTitleProps) {
   return (
-    <div className="mb-4">
-      <h2 className="text-lg font-semibold text-foreground">{children}</h2>
-      {subtitle ? <p className="text-sm text-muted">{subtitle}</p> : null}
+    <div className="page-title">
+      <h2 className="page-title-heading">{children}</h2>
+      {subtitle ? <p className="page-title-subtitle">{subtitle}</p> : null}
     </div>
   )
 }

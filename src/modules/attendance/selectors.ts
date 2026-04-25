@@ -12,6 +12,7 @@ import type {
 } from "@/modules/attendance/types"
 
 const EMPTY_ATTENDANCE_ENTRIES: AttendanceEntry[] = []
+const MAX_ANOMALIES = 5
 
 function isAnomalyStatus(status: AttendanceStatus): status is "absent" | "late" {
   return status === "absent" || status === "late"
@@ -64,14 +65,17 @@ export function getCalendarMatrix(
       const dayOfWeek = day.day()
       const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
       const isCurrentMonth = day.month() === start.month() && day.year() === start.year()
-      const isVacation = entry?.status === "holiday" || entry?.isSchoolDay === false
       const status: AttendanceStatus = !isCurrentMonth
         ? "not_marked"
         : isWeekend
           ? "weekend"
-          : isVacation
-            ? "holiday"
-            : entry?.status ?? "not_marked"
+          : !entry
+            ? "not_marked"
+            : entry.status === "present" || entry.status === "late" || entry.status === "absent"
+              ? entry.status
+              : entry.status === "holiday" || entry.isSchoolDay === false
+                ? "holiday"
+                : "not_marked"
       const isFuture = day.isAfter(today, "day")
 
       return {
@@ -105,18 +109,26 @@ export function useAttendanceSummary(childId: string) {
 }
 
 export function getAnomalies(entries: AttendanceEntry[]): AttendanceAnomaly[] {
-  return entries
+  const anomalies = entries
     .filter((entry) => isAnomalyStatus(entry.status))
     .map((entry) => {
       const status: "absent" | "late" = entry.status === "absent" ? "absent" : "late"
+      const hasNote = Boolean((entry.absentNote?.note ?? entry.note)?.trim())
       return {
         date: entry.date,
         status,
         reason: entry.absentNote?.note ?? entry.note,
+        hasNote,
+        needsAction: status === "absent" && !hasNote,
       }
     })
     .sort((a, b) => b.date.localeCompare(a.date))
-    .slice(0, 5)
+
+  const unresolved = anomalies.filter((entry) => entry.needsAction)
+  const resolved = anomalies.filter((entry) => !entry.needsAction)
+  const remainingSlots = Math.max(0, MAX_ANOMALIES - unresolved.length)
+
+  return [...unresolved, ...resolved.slice(0, remainingSlots)]
 }
 
 export function useAttendanceAnomalies(childId: string) {

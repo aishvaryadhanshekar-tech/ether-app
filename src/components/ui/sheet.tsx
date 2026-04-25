@@ -1,6 +1,5 @@
 import * as React from "react"
 import { createPortal } from "react-dom"
-import { cn } from "@/lib/utils"
 
 type SheetSide = "top" | "right" | "bottom" | "left"
 
@@ -48,20 +47,19 @@ export function Sheet({ open, onOpenChange, children }: SheetProps) {
   return <SheetContext.Provider value={{ open, onOpenChange }}>{children}</SheetContext.Provider>
 }
 
-interface SheetContentProps extends React.HTMLAttributes<HTMLDivElement> {
+interface SheetContentProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "className" | "style"> {
   side?: SheetSide
 }
 
 const sideClassNameMap: Record<SheetSide, string> = {
-  top: "inset-x-0 top-0 border-b",
-  right: "inset-y-0 right-0 h-full w-[90vw] max-w-sm border-l",
-  bottom: "inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto border-t",
-  left: "inset-y-0 left-0 h-full w-[90vw] max-w-sm border-r",
+  top: "sheet-content-top",
+  right: "sheet-content-right",
+  bottom: "sheet-content-bottom",
+  left: "sheet-content-left",
 }
 
 export function SheetContent({
   side = "right",
-  className,
   children,
   ...props
 }: SheetContentProps) {
@@ -76,20 +74,16 @@ export function SheetContent({
   }
 
   return createPortal(
-    <div className="fixed inset-0 z-[1000]">
+    <div className="sheet-root">
       <div
-        className="absolute inset-0 bg-black/45"
+        className="sheet-backdrop"
         onMouseDown={() => context.onOpenChange(false)}
         onTouchStart={() => context.onOpenChange(false)}
       />
       <div
         role="dialog"
         aria-modal="true"
-        className={cn(
-          "fixed z-[1001] bg-white p-4 shadow-xl",
-          sideClassNameMap[side],
-          className,
-        )}
+        className={`sheet-content ${sideClassNameMap[side]}`}
         onMouseDown={(event) => event.stopPropagation()}
         onTouchStart={(event) => event.stopPropagation()}
         {...props}

@@ -87,17 +87,22 @@ export function AttendanceSection({ childId }: AttendanceSectionProps) {
     setNote("")
   }
 
+  function handleAddNote(date: string) {
+    setSelectedDate(date)
+    setBottomSheetOpen(true)
+  }
+
   return (
-    <section>
+    <section className="attendance-section">
       <AttendanceHeader
         month={month}
         year={year}
         onPreviousMonth={handlePreviousMonth}
         onNextMonth={handleNextMonth}
       />
-      {loading ? <p className="mb-3 text-sm text-muted">Loading attendance...</p> : null}
+      {loading ? <p className="attendance-section-loading">Loading attendance...</p> : null}
 
-      <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
+      <div className="attendance-section-grid">
         <div>
           <AttendanceCalendar matrix={matrix} onCellClick={handleCellClick} />
           <AttendanceBottomSheet
@@ -111,9 +116,9 @@ export function AttendanceSection({ childId }: AttendanceSectionProps) {
           />
         </div>
 
-        <div className="space-y-4">
+        <div className="attendance-section-stack">
           <AttendanceSummary summary={summary} />
-          <AttendanceAnomalies anomalies={anomalies} />
+          <AttendanceAnomalies anomalies={anomalies} onAddNote={handleAddNote} />
         </div>
       </div>
     </section>

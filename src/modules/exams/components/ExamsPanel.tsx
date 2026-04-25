@@ -22,14 +22,14 @@ export function ExamsPanel({ childId }: ExamsPanelProps) {
 
   return (
     <Card>
-      <h3 className="mb-3 text-base font-semibold text-foreground">Exams</h3>
-      {loading ? <p className="text-sm text-muted">Loading...</p> : null}
-      <ul className="space-y-2">
+      <h3 className="screen-card-title">Exams</h3>
+      {loading ? <p className="screen-card-copy">Loading...</p> : null}
+      <ul className="exams-panel-list">
         {exams.map((exam) => (
-          <li key={exam.id} className="rounded-lg border border-border p-3">
-            <p className="font-medium text-foreground">{exam.subject}</p>
-            <p className="text-sm text-muted">Date: {exam.date ?? exam.examDate}</p>
-            <p className="text-sm text-muted">
+          <li key={exam.id} className="exams-panel-item">
+            <p className="exams-panel-subject">{exam.subject}</p>
+            <p className="exams-panel-meta">Date: {exam.date ?? exam.examDate}</p>
+            <p className="exams-panel-meta">
               Result: {exam.result ?? "pending"}
               {typeof exam.score === "number" && typeof exam.maxScore === "number"
                 ? ` (${exam.score}/${exam.maxScore})`
