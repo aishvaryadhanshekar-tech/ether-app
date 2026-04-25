@@ -3,6 +3,7 @@ import isSameOrBefore from "dayjs/plugin/isSameOrBefore"
 import type { SeedSchema } from "@/db/schema"
 import type { AttendanceEntry, AttendanceStatus } from "@/modules/attendance/types"
 import type { Exam } from "@/modules/exams/types"
+import type { TimetableDay, TimetableWeek } from "@/modules/timetable/types"
 
 dayjs.extend(isSameOrBefore)
 
@@ -172,6 +173,80 @@ function buildExamsForChild(childId: string, year: number): Exam[] {
   return exams.sort((a, b) => dayjs(a.date).valueOf() - dayjs(b.date).valueOf())
 }
 
+function buildDayPeriods(day: TimetableDay["day"]) {
+  const timetableByDay: Record<
+    TimetableDay["day"],
+    Array<{ subject: string; teacher: string; startTime: string; endTime: string; isBreak?: boolean }>
+  > = {
+    mon: [
+      { subject: "Mathematics", teacher: "Mr. Sharma", startTime: "08:00", endTime: "08:45" },
+      { subject: "English", teacher: "Ms. D'Souza", startTime: "08:50", endTime: "09:35" },
+      { subject: "Science", teacher: "Mrs. Iyer", startTime: "09:40", endTime: "10:25" },
+      { subject: "Lunch Break", teacher: "", startTime: "10:25", endTime: "10:55", isBreak: true },
+      { subject: "Social Studies", teacher: "Mr. Khan", startTime: "11:00", endTime: "11:45" },
+      { subject: "Hindi", teacher: "Ms. Verma", startTime: "11:50", endTime: "12:35" },
+      { subject: "Computer", teacher: "Mr. Nair", startTime: "12:40", endTime: "13:25" },
+    ],
+    tue: [
+      { subject: "English", teacher: "Ms. D'Souza", startTime: "08:00", endTime: "08:45" },
+      { subject: "Mathematics", teacher: "Mr. Sharma", startTime: "08:50", endTime: "09:35" },
+      { subject: "Computer", teacher: "Mr. Nair", startTime: "09:40", endTime: "10:25" },
+      { subject: "Lunch Break", teacher: "", startTime: "10:25", endTime: "10:55", isBreak: true },
+      { subject: "Science", teacher: "Mrs. Iyer", startTime: "11:00", endTime: "11:45" },
+      { subject: "Art", teacher: "Ms. Kulkarni", startTime: "11:50", endTime: "12:35" },
+      { subject: "Hindi", teacher: "Ms. Verma", startTime: "12:40", endTime: "13:25" },
+    ],
+    wed: [
+      { subject: "Science", teacher: "Mrs. Iyer", startTime: "08:00", endTime: "08:45" },
+      { subject: "Mathematics", teacher: "Mr. Sharma", startTime: "08:50", endTime: "09:35" },
+      { subject: "Social Studies", teacher: "Mr. Khan", startTime: "09:40", endTime: "10:25" },
+      { subject: "Lunch Break", teacher: "", startTime: "10:25", endTime: "10:55", isBreak: true },
+      { subject: "English", teacher: "Ms. D'Souza", startTime: "11:00", endTime: "11:45" },
+      { subject: "Physical Education", teacher: "Mr. Das", startTime: "11:50", endTime: "12:35" },
+      { subject: "Computer", teacher: "Mr. Nair", startTime: "12:40", endTime: "13:25" },
+    ],
+    thu: [
+      { subject: "Hindi", teacher: "Ms. Verma", startTime: "08:00", endTime: "08:45" },
+      { subject: "Science", teacher: "Mrs. Iyer", startTime: "08:50", endTime: "09:35" },
+      { subject: "English", teacher: "Ms. D'Souza", startTime: "09:40", endTime: "10:25" },
+      { subject: "Lunch Break", teacher: "", startTime: "10:25", endTime: "10:55", isBreak: true },
+      { subject: "Mathematics", teacher: "Mr. Sharma", startTime: "11:00", endTime: "11:45" },
+      { subject: "Library", teacher: "Ms. Joseph", startTime: "11:50", endTime: "12:35" },
+      { subject: "Social Studies", teacher: "Mr. Khan", startTime: "12:40", endTime: "13:25" },
+    ],
+    fri: [
+      { subject: "Mathematics", teacher: "Mr. Sharma", startTime: "08:00", endTime: "08:45" },
+      { subject: "Computer", teacher: "Mr. Nair", startTime: "08:50", endTime: "09:35" },
+      { subject: "English", teacher: "Ms. D'Souza", startTime: "09:40", endTime: "10:25" },
+      { subject: "Lunch Break", teacher: "", startTime: "10:25", endTime: "10:55", isBreak: true },
+      { subject: "Science", teacher: "Mrs. Iyer", startTime: "11:00", endTime: "11:45" },
+      { subject: "Hindi", teacher: "Ms. Verma", startTime: "11:50", endTime: "12:35" },
+      { subject: "Music", teacher: "Mr. Pinto", startTime: "12:40", endTime: "13:25" },
+    ],
+  }
+
+  return timetableByDay[day].map((period, index) => ({
+    id: period.isBreak ? `${day}_break_lunch` : `${day}_p${index + 1}`,
+    ...period,
+  }))
+}
+
+function buildTimetableWeek(childId: string, today: dayjs.Dayjs = dayjs()): TimetableWeek {
+  const weekday = today.day()
+  const daysFromMonday = weekday === 0 ? 6 : weekday - 1
+  const weekStartDate = today.subtract(daysFromMonday, "day").format("YYYY-MM-DD")
+  const orderedDays: TimetableDay["day"][] = ["mon", "tue", "wed", "thu", "fri"]
+
+  return {
+    childId,
+    weekStartDate,
+    days: orderedDays.map((day) => ({
+      day,
+      periods: buildDayPeriods(day),
+    })),
+  }
+}
+
 type DayPatch = Pick<
   AttendanceEntry,
   "status" | "markedAt" | "periodsPresent" | "absentNote" | "note" | "isSchoolDay"
@@ -325,7 +400,9 @@ export function generateSeedData(): SeedSchema {
     attendance: {
       [childId]: generateAttendance(childId, year, lastDay),
     },
-    timetable: {},
+    timetable: {
+      [childId]: buildTimetableWeek(childId),
+    },
     exams: {
       [childId]: buildExamsForChild(childId, year),
     },

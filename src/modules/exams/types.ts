@@ -1,6 +1,18 @@
 export type ExamType = "unit_test" | "term" | "practical"
 export type ExamOutcome = "pass" | "fail" | "pending"
 
+export interface UpcomingExam {
+  id: string
+  childId: string
+  subject: string
+  examType: ExamType
+  date: string
+  period?: string
+  syllabus?: string | string[]
+  // Transitional alias used by existing UI/selectors.
+  examDate?: string
+}
+
 export interface Exam {
   id: string
   childId: string
@@ -8,10 +20,8 @@ export interface Exam {
   examType: ExamType
   date: string
   period?: string
-  syllabus?: string
-  // Transitional alias used by existing UI/selectors.
+  syllabus?: string | string[]
   examDate?: string
-  // Transitional fields used by legacy exam card UI.
   score?: number
   maxScore?: number
   result?: ExamOutcome
@@ -27,7 +37,7 @@ export interface SubjectResult {
 export interface ExamResult {
   id: string
   childId: string
-  examName: string
+  name: string
   date: string
   percentage: number
   grade: string
@@ -37,4 +47,6 @@ export interface ExamResult {
 
 // Transitional aliases to keep existing services/components stable.
 export type ExamEntry = Exam
+export type UpcomingExamsByChild = Record<string, UpcomingExam[]>
+export type ExamResultsByChild = Record<string, ExamResult[]>
 export type ExamsByChild = Record<string, Exam[]>

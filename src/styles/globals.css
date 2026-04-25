@@ -212,6 +212,25 @@
   .attendance-anomalies-action-success { @apply text-[0.75rem] font-medium text-green-700; }
   .attendance-anomalies-action-info { @apply text-[0.75rem] text-muted; }
 
+  .timetable-section { @apply space-y-2; }
+  .timetable-day-selector { @apply -mx-2 flex gap-4 overflow-x-auto px-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden; }
+  .timetable-day-filter { @apply inline-flex h-8 shrink-0 items-center border-b-2 border-transparent px-0 text-[0.875rem] text-muted transition-colors; }
+  .timetable-day-filter[data-active="true"] { @apply border-primary font-medium text-primary; }
+  .timetable-period-list { @apply divide-y divide-border/60; }
+  .timetable-period-row { @apply flex w-full gap-4 py-3 text-left transition-colors; }
+  .timetable-period-row[data-current="true"] { @apply border-l-2 border-primary bg-primary/5 pl-2; }
+  .timetable-period-time-column { @apply w-16 shrink-0 text-[0.75rem] leading-tight text-muted; }
+  .timetable-period-time-start { @apply font-medium text-foreground; }
+  .timetable-period-time-end { @apply mt-1; }
+  .timetable-period-content { @apply min-w-0 flex-1; }
+  .timetable-period-subject-row { @apply flex items-center justify-between gap-2; }
+  .timetable-period-subject { @apply text-[0.9375rem] font-semibold text-foreground; }
+  .timetable-period-now-tag { @apply text-[0.6875rem] font-medium text-primary; }
+  .timetable-period-teacher { @apply mt-0.5 text-[0.8125rem] text-muted; }
+  .timetable-break-row { @apply py-2 text-center; }
+  .timetable-break-label { @apply text-[0.75rem] text-muted; }
+  .timetable-empty-state { @apply rounded-lg border border-dashed border-border bg-muted/30 px-3 py-4 text-[0.8125rem] text-muted; }
+
   .sheet-root { @apply fixed inset-0 z-[1000]; }
   .sheet-backdrop { @apply absolute inset-0 bg-black/45; }
   .sheet-content { @apply fixed z-[1001] bg-card p-4 shadow-xl; }
@@ -247,8 +266,37 @@
   .ui-textarea { @apply flex field-sizing-content min-h-16 w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40; }
   .info-sheet { @apply rounded-xl border border-border bg-muted p-4; }
   .info-sheet-title { @apply mb-3 text-sm font-semibold uppercase tracking-wide text-muted; }
-  .exams-panel-list { @apply space-y-2; }
-  .exams-panel-item { @apply rounded-lg border border-border p-3; }
-  .exams-panel-subject { @apply text-[0.9375rem] font-medium text-foreground; }
-  .exams-panel-meta { @apply text-[0.8125rem] text-muted; }
+  .exams-section { @apply space-y-2 pb-6; }
+  .exams-text-switcher { @apply flex items-center justify-end gap-4 pb-1; }
+  .exams-text-switcher-item { @apply text-sm text-gray-400; }
+  .exams-text-switcher-item[data-active="true"] { @apply font-medium text-primary; }
+  .exams-empty-state { @apply rounded-lg border border-dashed border-border bg-muted/30 px-3 py-4 text-[0.8125rem] text-muted; }
+  .upcoming-list { @apply space-y-0; }
+  .upcoming-date-group { @apply mt-6; }
+  .upcoming-date-group:first-child { @apply mt-2; }
+  .upcoming-date-header { @apply mb-2 text-xs font-medium tracking-wide text-gray-500 uppercase; }
+  .upcoming-date-rows { @apply space-y-0; }
+  .exam-row { @apply block w-full border-b border-gray-100 py-3 text-left transition-colors hover:bg-gray-50 active:scale-[0.98]; }
+  .upcoming-date-rows .exam-row:last-child { @apply border-b-0; }
+  .exam-row-main { @apply flex items-center justify-between gap-2; }
+  .exam-row-indicator { @apply mr-3 h-4 w-1 shrink-0 rounded-full bg-primary/30; }
+  .exam-row-left { @apply min-w-0 flex-1; }
+  .exam-row-subject { @apply truncate text-[0.875rem] font-medium text-foreground; }
+  .exam-row-period { @apply mt-0.5 text-xs text-gray-400; }
+  .exam-row-link { @apply shrink-0 text-sm text-primary underline-offset-2 hover:underline; }
+  .results-list { @apply divide-y divide-border/50; }
+  .result-card { @apply block w-full py-3 text-left; }
+  .result-card-main { @apply flex items-start justify-between gap-2; }
+  .result-card-left { @apply min-w-0; }
+  .result-card-score-subject-row { @apply flex items-baseline gap-2; }
+  .result-card-score { @apply text-[1.375rem] leading-none font-semibold text-primary; }
+  .result-card-name { @apply text-[0.875rem] font-medium text-foreground; }
+  .result-card-grade { @apply mt-1 text-[0.75rem] text-muted; }
+  .result-card-date { @apply shrink-0 text-[0.75rem] text-muted; }
+  .exam-sheet-bullets { @apply mt-2 list-disc space-y-1 pl-5 text-sm text-foreground; }
+  .exam-sheet-results-table { @apply mt-2 space-y-2; }
+  .exam-sheet-results-row { @apply grid grid-cols-[1fr_auto_auto] items-center gap-2 text-sm; }
+  .exam-sheet-results-subject { @apply font-medium text-foreground; }
+  .exam-sheet-results-score { @apply text-muted; }
+  .exam-sheet-results-grade { @apply text-right font-medium text-foreground; }
 }

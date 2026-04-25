@@ -6,6 +6,7 @@ import {
 import type { AttendanceByChild } from "@/modules/attendance/types"
 import { createContextSlice, type ContextSlice } from "@/store/contextStore"
 import { createExamSlice, type ExamsSlice } from "@/modules/exams/store"
+import { createTimetableSlice, type TimetableSlice } from "@/modules/timetable/store"
 import type { Child } from "@/modules/child/types"
 import type { TimetableWeek } from "@/modules/timetable/types"
 import type { Exam, ExamResult } from "@/modules/exams/types"
@@ -22,10 +23,11 @@ export interface AppDataSchema {
   learnSession: Record<string, LearnSession>
 }
 
-export type AppStore = AppDataSchema & ContextSlice & AttendanceSlice & ExamsSlice
+export type AppStore = AppDataSchema & ContextSlice & AttendanceSlice & ExamsSlice & TimetableSlice
 
 export const useAppStore = create<AppStore>()((...args) => ({
   ...createContextSlice(...args),
   ...createAttendanceSlice(...args),
   ...createExamSlice(...args),
+  ...createTimetableSlice(...args),
 }))

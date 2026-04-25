@@ -1,7 +1,7 @@
 export interface Period {
   id: string
   subject: string
-  teacherName: string
+  teacher: string
   startTime: string
   endTime: string
   isBreak?: boolean

@@ -1,43 +1,53 @@
 import { useEffect, useState } from "react"
-import { Card } from "@/design-system/components/Card"
-import { useExams } from "@/modules/exams/selectors"
+import { ExamDetailsSheet } from "@/modules/exams/components/ExamDetailsSheet"
+import { UpcomingList } from "@/modules/exams/components/UpcomingList"
+import { useUpcomingExams } from "@/modules/exams/selectors"
 import { examsService } from "@/services/exams.service"
+import type { UpcomingExam } from "@/modules/exams/types"
 
 interface ExamsPanelProps {
   childId: string
 }
 
 export function ExamsPanel({ childId }: ExamsPanelProps) {
-  const exams = useExams(childId)
+  const upcoming = useUpcomingExams(childId)
   const [loading, setLoading] = useState(false)
+  const [isSheetOpen, setSheetOpen] = useState(false)
+  const [selectedUpcoming, setSelectedUpcoming] = useState<UpcomingExam | null>(null)
 
   useEffect(() => {
     const load = async () => {
       setLoading(true)
-      await examsService.getByChild(childId)
+      await examsService.getUpcomingByChild(childId)
       setLoading(false)
     }
     void load()
   }, [childId])
 
+  function handleSelectUpcoming(exam: UpcomingExam) {
+    setSelectedUpcoming(exam)
+    setSheetOpen(true)
+  }
+
   return (
-    <Card>
-      <h3 className="screen-card-title">Exams</h3>
+    <section className="exams-section">
+      <div className="exams-text-switcher">
+        <span className="exams-text-switcher-item" data-active="true">
+          Upcoming
+        </span>
+        <span className="exams-text-switcher-item" data-active="false">
+          Results
+        </span>
+      </div>
       {loading ? <p className="screen-card-copy">Loading...</p> : null}
-      <ul className="exams-panel-list">
-        {exams.map((exam) => (
-          <li key={exam.id} className="exams-panel-item">
-            <p className="exams-panel-subject">{exam.subject}</p>
-            <p className="exams-panel-meta">Date: {exam.date ?? exam.examDate}</p>
-            <p className="exams-panel-meta">
-              Result: {exam.result ?? "pending"}
-              {typeof exam.score === "number" && typeof exam.maxScore === "number"
-                ? ` (${exam.score}/${exam.maxScore})`
-                : ""}
-            </p>
-          </li>
-        ))}
-      </ul>
-    </Card>
+      <UpcomingList exams={upcoming} onSelectExam={handleSelectUpcoming} />
+      <ExamDetailsSheet
+        mode="upcoming"
+        selectedUpcoming={selectedUpcoming}
+        selectedResult={null}
+        isOpen={isSheetOpen}
+        onOpenChange={setSheetOpen}
+      />
+    </section>
   )
 }
