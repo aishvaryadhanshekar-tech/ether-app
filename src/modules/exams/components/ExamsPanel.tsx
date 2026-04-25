@@ -28,9 +28,9 @@ export function ExamsPanel({ childId }: ExamsPanelProps) {
         {exams.map((exam) => (
           <li key={exam.id} className="rounded-lg border border-border p-3">
             <p className="font-medium text-foreground">{exam.subject}</p>
-            <p className="text-sm text-muted">Date: {exam.examDate}</p>
+            <p className="text-sm text-muted">Date: {exam.date ?? exam.examDate}</p>
             <p className="text-sm text-muted">
-              Result: {exam.result}
+              Result: {exam.result ?? "pending"}
               {typeof exam.score === "number" && typeof exam.maxScore === "number"
                 ? ` (${exam.score}/${exam.maxScore})`
                 : ""}

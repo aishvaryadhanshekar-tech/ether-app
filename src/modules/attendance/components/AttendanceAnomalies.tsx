@@ -1,8 +1,8 @@
 import { Card } from "@/design-system/components/Card"
-import type { AttendanceEntry } from "@/modules/attendance/types"
+import type { AttendanceAnomaly } from "@/modules/attendance/types"
 
 interface AttendanceAnomaliesProps {
-  anomalies: AttendanceEntry[]
+  anomalies: AttendanceAnomaly[]
 }
 
 export function AttendanceAnomalies({ anomalies }: AttendanceAnomaliesProps) {

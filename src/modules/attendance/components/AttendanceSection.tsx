@@ -7,6 +7,7 @@ import { AttendanceHeader } from "@/modules/attendance/components/AttendanceHead
 import { AttendanceSummary } from "@/modules/attendance/components/AttendanceSummary"
 import {
   getAnomalies,
+  getMonthlyAttendanceEntries,
   getSummary,
   useAttendanceEntries,
   useCalendarMatrix,
@@ -29,10 +30,10 @@ export function AttendanceSection({ childId }: AttendanceSectionProps) {
 
   const entries = useAttendanceEntries(childId)
   const matrix = useCalendarMatrix(childId, month, year)
-  const monthlyEntries = useMemo(() => {
-    const prefix = `${year}-${String(month).padStart(2, "0")}-`
-    return entries.filter((entry) => entry.date.startsWith(prefix))
-  }, [entries, month, year])
+  const monthlyEntries = useMemo(
+    () => getMonthlyAttendanceEntries(entries, month, year),
+    [entries, month, year],
+  )
   const summary = useMemo(() => getSummary(monthlyEntries), [monthlyEntries])
   const anomalies = useMemo(() => getAnomalies(monthlyEntries), [monthlyEntries])
 
@@ -64,8 +65,18 @@ export function AttendanceSection({ childId }: AttendanceSectionProps) {
   }
 
   function handleCellClick(cell: CalendarCellData) {
+    if (cell.isDisabled) {
+      return
+    }
     setSelectedDate(cell.date)
     setBottomSheetOpen(true)
+  }
+
+  function handleBottomSheetOpenChange(open: boolean) {
+    setBottomSheetOpen(open)
+    if (!open) {
+      setNote("")
+    }
   }
 
   async function handleSubmitNote() {
@@ -91,6 +102,7 @@ export function AttendanceSection({ childId }: AttendanceSectionProps) {
           <AttendanceCalendar matrix={matrix} onCellClick={handleCellClick} />
           <AttendanceBottomSheet
             isOpen={isBottomSheetOpen}
+            onOpenChange={handleBottomSheetOpenChange}
             selectedDate={selectedDate}
             entry={selectedEntry}
             note={note}

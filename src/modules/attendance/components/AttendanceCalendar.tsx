@@ -8,14 +8,14 @@ interface AttendanceCalendarProps {
 }
 
 export function AttendanceCalendar({ matrix, onCellClick }: AttendanceCalendarProps) {
+  const dayHeaders = ["M", "T", "W", "T", "F", "S", "S"] as const
+
   return (
     <Card>
-      <div className="mb-3 grid grid-cols-5 gap-2 text-center text-xs font-semibold uppercase tracking-wide text-muted">
-        <span>Mon</span>
-        <span>Tue</span>
-        <span>Wed</span>
-        <span>Thu</span>
-        <span>Fri</span>
+      <div className="mb-3 grid grid-cols-7 gap-2 text-center text-xs font-semibold uppercase tracking-wide text-muted">
+        {dayHeaders.map((label, index) => (
+          <span key={`${label}-${index}`}>{label}</span>
+        ))}
       </div>
       <CalendarGrid matrix={matrix} onCellClick={onCellClick} />
     </Card>

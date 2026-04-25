@@ -1,14 +1,40 @@
-export type AttendanceEntryStatus = "present" | "absent" | "late" | "holiday"
-export type AttendanceStatus = AttendanceEntryStatus | "not_marked"
+export type AttendanceStatus =
+  | "present"
+  | "absent"
+  | "late"
+  | "holiday"
+  | "weekend"
+  | "not_marked"
 
 export interface AttendanceEntry {
+  id: string
+  childId: string
   date: string
-  status: AttendanceEntryStatus
+  status: AttendanceStatus
   markedAt?: string
+  periodsPresent?: number
+  absentNote?: {
+    note: string
+    submittedAt: string
+  }
+  isSchoolDay: boolean
+  // Transitional alias for existing UI components.
   note?: string
 }
 
 export type AttendanceByChild = Record<string, AttendanceEntry[]>
+
+export interface AttendanceSummary {
+  present: number
+  absent: number
+  late: number
+}
+
+export interface AttendanceAnomaly {
+  date: string
+  status: "absent" | "late"
+  reason?: string
+}
 
 export interface CalendarCellData {
   date: string

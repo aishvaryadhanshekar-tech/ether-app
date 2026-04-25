@@ -26,11 +26,21 @@ export const createAttendanceSlice: StateCreator<
   },
   updateAttendanceNote: (childId, date, note) => {
     const entries = get().attendance[childId] ?? []
+    const submittedAt = new Date().toISOString()
     set({
       attendance: {
         ...get().attendance,
         [childId]: entries.map((entry) =>
-          entry.date === date ? { ...entry, note } : entry,
+          entry.date === date
+            ? {
+                ...entry,
+                note,
+                absentNote: {
+                  note,
+                  submittedAt,
+                },
+              }
+            : entry,
         ),
       },
     })

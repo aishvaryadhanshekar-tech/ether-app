@@ -3,7 +3,9 @@ import dayjs from "dayjs"
 import { useAppStore } from "@/store/rootStore"
 import { sortByDateDescending } from "@/modules/attendance/utils"
 import type {
+  AttendanceAnomaly,
   AttendanceEntry,
+  AttendanceSummary,
   AttendanceStatus,
   CalendarCellData,
   CalendarMatrix,
@@ -11,11 +13,24 @@ import type {
 
 const EMPTY_ATTENDANCE_ENTRIES: AttendanceEntry[] = []
 
+function isAnomalyStatus(status: AttendanceStatus): status is "absent" | "late" {
+  return status === "absent" || status === "late"
+}
+
 export function useAttendanceEntries(childId: string) {
   const entries = useAppStore(
     (state) => state.attendance[childId] ?? EMPTY_ATTENDANCE_ENTRIES,
   )
   return useMemo(() => sortByDateDescending(entries), [entries])
+}
+
+export function getMonthlyAttendanceEntries(
+  entries: AttendanceEntry[],
+  month: number,
+  year: number,
+) {
+  const prefix = `${year}-${String(month).padStart(2, "0")}-`
+  return entries.filter((entry) => entry.date.startsWith(prefix))
 }
 
 export function getCalendarMatrix(
@@ -29,35 +44,43 @@ export function getCalendarMatrix(
   const entryByDate = Object.fromEntries(entries.map((entry) => [entry.date, entry]))
 
   const days: dayjs.Dayjs[] = []
-  let current = start
+  const startOffset = (start.day() + 6) % 7
+  let current = start.subtract(startOffset, "day")
 
-  while (current.isBefore(end) || current.isSame(end, "day")) {
-    const day = current.day()
-    if (day !== 0 && day !== 6) {
-      days.push(current)
-    }
+  while (current.isBefore(end) || current.isSame(end, "day") || days.length % 7 !== 0) {
+    days.push(current)
     current = current.add(1, "day")
   }
 
   const rows: dayjs.Dayjs[][] = []
-  for (let i = 0; i < days.length; i += 5) {
-    rows.push(days.slice(i, i + 5))
+  for (let i = 0; i < days.length; i += 7) {
+    rows.push(days.slice(i, i + 7))
   }
 
   return rows.map((row) =>
     row.map((day): CalendarCellData => {
       const date = day.format("YYYY-MM-DD")
       const entry = entryByDate[date]
-      const status: AttendanceStatus = entry?.status ?? "not_marked"
+      const dayOfWeek = day.day()
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
+      const isCurrentMonth = day.month() === start.month() && day.year() === start.year()
+      const isVacation = entry?.status === "holiday" || entry?.isSchoolDay === false
+      const status: AttendanceStatus = !isCurrentMonth
+        ? "not_marked"
+        : isWeekend
+          ? "weekend"
+          : isVacation
+            ? "holiday"
+            : entry?.status ?? "not_marked"
       const isFuture = day.isAfter(today, "day")
 
       return {
         date,
         dayNumber: day.date(),
         status,
-        isCurrentMonth: true,
+        isCurrentMonth,
         isToday: day.isSame(today, "day"),
-        isDisabled: status === "holiday" || isFuture,
+        isDisabled: !isCurrentMonth || status === "holiday" || status === "weekend" || isFuture,
       }
     }),
   )
@@ -68,7 +91,7 @@ export function useCalendarMatrix(childId: string, month: number, year: number) 
   return useMemo(() => getCalendarMatrix(entries, month, year), [entries, month, year])
 }
 
-export function getSummary(entries: AttendanceEntry[]) {
+export function getSummary(entries: AttendanceEntry[]): AttendanceSummary {
   return {
     present: entries.filter((entry) => entry.status === "present").length,
     absent: entries.filter((entry) => entry.status === "absent").length,
@@ -81,9 +104,17 @@ export function useAttendanceSummary(childId: string) {
   return useMemo(() => getSummary(entries), [entries])
 }
 
-export function getAnomalies(entries: AttendanceEntry[]) {
+export function getAnomalies(entries: AttendanceEntry[]): AttendanceAnomaly[] {
   return entries
-    .filter((entry) => entry.status === "absent" || entry.status === "late")
+    .filter((entry) => isAnomalyStatus(entry.status))
+    .map((entry) => {
+      const status: "absent" | "late" = entry.status === "absent" ? "absent" : "late"
+      return {
+        date: entry.date,
+        status,
+        reason: entry.absentNote?.note ?? entry.note,
+      }
+    })
     .sort((a, b) => b.date.localeCompare(a.date))
     .slice(0, 5)
 }
