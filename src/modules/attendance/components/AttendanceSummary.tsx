@@ -16,13 +16,13 @@ export function AttendanceSummary({ summary }: AttendanceSummaryProps) {
     <div className="attendance-summary">
       <h4 className="attendance-summary-title">Attendance Summary</h4>
       <div className="attendance-summary-chips">
-        <span className="attendance-summary-chip attendance-summary-chip-absent">
+        <span className="attendance-summary-chip">
           {summary.absent} Absent ({absentPercent}%)
         </span>
-        <span className="attendance-summary-chip attendance-summary-chip-late">
+        <span className="attendance-summary-chip">
           {summary.late} Late ({latePercent}%)
         </span>
-        <span className="attendance-summary-chip attendance-summary-chip-present">
+        <span className="attendance-summary-chip">
           {summary.present} Present ({presentPercent}%)
         </span>
       </div>

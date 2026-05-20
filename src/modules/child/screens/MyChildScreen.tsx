@@ -24,7 +24,7 @@ export function MyChildScreen({ initialTab = "attendance" }: MyChildScreenProps)
       case "timetable":
         return <TimetableScreen />
       case "badges":
-        return <BadgesScreen />
+        return <BadgesScreen childId={activeChildId} />
       case "learn":
         return <LearnScreen />
       default:

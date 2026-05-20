@@ -1,4 +1,4 @@
-import dayjs from "dayjs"
+import { ExamListCard } from "@/modules/exams/components/ExamListCard"
 import type { ExamResult } from "@/modules/exams/types"
 
 interface ResultCardProps {
@@ -8,17 +8,13 @@ interface ResultCardProps {
 
 export function ResultCard({ result, onClick }: ResultCardProps) {
   return (
-    <button type="button" className="result-card" onClick={() => onClick(result)}>
-      <div className="result-card-main">
-        <div className="result-card-left">
-          <div className="result-card-score-subject-row">
-            <p className="result-card-score">{result.percentage}%</p>
-            <p className="result-card-name">{result.name}</p>
-          </div>
-          <p className="result-card-grade">Grade {result.grade}</p>
-        </div>
-        <p className="result-card-date">{dayjs(result.date).format("MMM D")}</p>
-      </div>
-    </button>
+    <ExamListCard
+      date={result.date}
+      title={result.name}
+      byline={result.teacher ?? "Teacher"}
+      rightPrimary={`${result.percentage}%`}
+      rightSecondary={`Grade ${result.grade}`}
+      onClick={() => onClick(result)}
+    />
   )
 }

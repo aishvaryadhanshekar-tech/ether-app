@@ -11,7 +11,7 @@ export function AppLayout() {
       : `Grade ${activeChild.class}-${activeChild.section}`
     : "Loading child profile..."
   const avatarName = encodeURIComponent(activeChild?.name ?? "Student")
-  const fallbackAvatar = `https://ui-avatars.com/api/?name=${avatarName}&background=EEF2FF&color=4F46E5&size=128&bold=true`
+  const fallbackAvatar = `https://ui-avatars.com/api/?name=${avatarName}&background=F4F4F5&color=171717&size=128&bold=true`
   const avatarSrc = activeChild?.photoUrl ?? fallbackAvatar
 
   return (

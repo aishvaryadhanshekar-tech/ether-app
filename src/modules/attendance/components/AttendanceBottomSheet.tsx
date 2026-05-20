@@ -82,7 +82,7 @@ export function AttendanceBottomSheet({
 
           {submittedNote ? (
             <div className="attendance-sheet-data-card">
-              <p className="attendance-sheet-label">Submitted Note</p>
+              <p className="attendance-sheet-label">Absence note</p>
               <p className="attendance-sheet-submitted-note">{submittedNote}</p>
             </div>
           ) : null}

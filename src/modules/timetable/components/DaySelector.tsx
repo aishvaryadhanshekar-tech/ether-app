@@ -1,29 +1,34 @@
-import type { TimetableDayName } from "@/modules/timetable/types"
-
-interface DaySelectorProps {
-  selectedDay: TimetableDayName
-  onSelectDay: (day: TimetableDayName) => void
+export interface DaySelectorItem<T extends string> {
+  value: T
+  label: string
 }
 
-const dayItems: Array<{ day: TimetableDayName; label: string }> = [
-  { day: "mon", label: "Mon" },
-  { day: "tue", label: "Tue" },
-  { day: "wed", label: "Wed" },
-  { day: "thu", label: "Thu" },
-  { day: "fri", label: "Fri" },
-]
+interface DaySelectorProps<T extends string> {
+  selectedValue: T
+  onSelectValue: (value: T) => void
+  items: DaySelectorItem<T>[]
+  ariaLabel: string
+  variant?: "underline" | "subtle"
+}
 
-export function DaySelector({ selectedDay, onSelectDay }: DaySelectorProps) {
+export function DaySelector<T extends string>({
+  selectedValue,
+  onSelectValue,
+  items,
+  ariaLabel,
+  variant = "underline",
+}: DaySelectorProps<T>) {
   return (
-    <div className="timetable-day-selector" aria-label="Weekday filter">
-      {dayItems.map((item) => (
+    <div className="timetable-day-selector" data-variant={variant} aria-label={ariaLabel}>
+      {items.map((item) => (
         <button
-          key={item.day}
+          key={item.value}
           type="button"
-          aria-pressed={selectedDay === item.day}
+          aria-pressed={selectedValue === item.value}
           className="timetable-day-filter"
-          data-active={selectedDay === item.day ? "true" : "false"}
-          onClick={() => onSelectDay(item.day)}
+          data-variant={variant}
+          data-active={selectedValue === item.value ? "true" : "false"}
+          onClick={() => onSelectValue(item.value)}
         >
           {item.label}
         </button>

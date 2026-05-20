@@ -1,4 +1,5 @@
-import { ExamRow } from "@/modules/exams/components/ExamRow"
+import dayjs from "dayjs"
+import { ExamListCard } from "@/modules/exams/components/ExamListCard"
 import type { UpcomingExam } from "@/modules/exams/types"
 
 interface UpcomingListProps {
@@ -8,33 +9,33 @@ interface UpcomingListProps {
 
 export function UpcomingList({ exams, onSelectExam }: UpcomingListProps) {
   if (exams.length === 0) {
-    return <p className="exams-empty-state">No upcoming exams scheduled. You're all caught up for now.</p>
+    return <p className="exams-empty-state">No upcoming exams. You're all set this week.</p>
   }
 
-  const groupedByDate = exams.reduce<Record<string, UpcomingExam[]>>((acc, exam) => {
-    const key = exam.date
-    if (!acc[key]) {
-      acc[key] = []
-    }
-    acc[key].push(exam)
-    return acc
-  }, {})
+  const today = dayjs().startOf("day")
+  const sorted = [...exams].sort((a, b) => a.date.localeCompare(b.date))
+  const nextIndex = sorted.findIndex((exam) => !dayjs(exam.date).startOf("day").isBefore(today))
+  const upcomingIndex = nextIndex >= 0 ? nextIndex : -1
 
-  const orderedDates = Object.keys(groupedByDate).sort((a, b) => a.localeCompare(b))
+  function toTypeLabel(type: UpcomingExam["examType"]) {
+    if (type === "unit_test") return "Unit Test"
+    if (type === "practical") return "Practical"
+    return "Term Exam"
+  }
 
   return (
-    <div className="upcoming-list">
-      {orderedDates.map((date, index) => (
-        <section key={date} className="upcoming-date-group">
-          <p className="upcoming-date-header" data-first={index === 0}>
-            {new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-          </p>
-          <div className="upcoming-date-rows">
-            {groupedByDate[date].map((exam) => (
-              <ExamRow key={exam.id} exam={exam} onClick={onSelectExam} />
-            ))}
-          </div>
-        </section>
+    <div className="results-list">
+      {sorted.map((exam, index) => (
+        <ExamListCard
+          key={exam.id}
+          date={exam.date}
+          title={`${exam.subject} ${toTypeLabel(exam.examType)}`}
+          byline={exam.teacher ?? "Teacher"}
+          rightPrimary="Syllabus ->"
+          rightPrimaryAsCta
+          chipLabel={index === upcomingIndex ? "Upcoming" : undefined}
+          onClick={() => onSelectExam(exam)}
+        />
       ))}
     </div>
   )

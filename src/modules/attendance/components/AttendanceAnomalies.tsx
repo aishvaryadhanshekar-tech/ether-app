@@ -24,7 +24,7 @@ export function AttendanceAnomalies({ anomalies, onAddNote }: AttendanceAnomalie
         <div className="attendance-anomalies-item-right">
           {entry.needsAction ? (
             <>
-              <span className="attendance-anomalies-action-note">No note submitted</span>
+              <span className="attendance-anomalies-action-note">No note</span>
               <button
                 type="button"
                 className="attendance-anomalies-action-link"
@@ -34,7 +34,7 @@ export function AttendanceAnomalies({ anomalies, onAddNote }: AttendanceAnomalie
               </button>
             </>
           ) : entry.status === "absent" ? (
-            <span className="attendance-anomalies-action-success">Note submitted</span>
+            <span className="attendance-anomalies-action-info">Note on record</span>
           ) : (
             <span className="attendance-anomalies-action-info">Arrived late</span>
           )}

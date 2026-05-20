@@ -5,6 +5,7 @@ export interface UpcomingExam {
   id: string
   childId: string
   subject: string
+  teacher?: string
   examType: ExamType
   date: string
   period?: string
@@ -17,6 +18,7 @@ export interface Exam {
   id: string
   childId: string
   subject: string
+  teacher?: string
   examType: ExamType
   date: string
   period?: string
@@ -38,6 +40,7 @@ export interface ExamResult {
   id: string
   childId: string
   name: string
+  teacher?: string
   date: string
   percentage: number
   grade: string

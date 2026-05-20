@@ -2,6 +2,7 @@ import dayjs from "dayjs"
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore"
 import type { SeedSchema } from "@/db/schema"
 import type { AttendanceEntry, AttendanceStatus } from "@/modules/attendance/types"
+import { badgeTypes, type Badge } from "@/modules/badges/types"
 import type { Exam } from "@/modules/exams/types"
 import type { TimetableDay, TimetableWeek } from "@/modules/timetable/types"
 
@@ -122,6 +123,7 @@ function buildExamsForChild(childId: string, year: number): Exam[] {
       id: `exam_math_${mathUnit.format("YYYY-MM-DD")}`,
       childId,
       subject: "Mathematics",
+      teacher: "Mr. Sharma",
       examType: "unit_test",
       date: mathUnit.format("YYYY-MM-DD"),
       examDate: mathUnit.format("YYYY-MM-DD"),
@@ -135,6 +137,7 @@ function buildExamsForChild(childId: string, year: number): Exam[] {
       id: `exam_english_${englishFormative.format("YYYY-MM-DD")}`,
       childId,
       subject: "English",
+      teacher: "Ms. D'Souza",
       examType: "unit_test",
       date: englishFormative.format("YYYY-MM-DD"),
       examDate: englishFormative.format("YYYY-MM-DD"),
@@ -148,6 +151,7 @@ function buildExamsForChild(childId: string, year: number): Exam[] {
       id: `exam_hindi_${hindiCompleted.format("YYYY-MM-DD")}`,
       childId,
       subject: "Hindi",
+      teacher: "Ms. Verma",
       examType: "unit_test",
       date: hindiCompleted.format("YYYY-MM-DD"),
       examDate: hindiCompleted.format("YYYY-MM-DD"),
@@ -161,6 +165,7 @@ function buildExamsForChild(childId: string, year: number): Exam[] {
       id: `exam_science_${scienceTerm.format("YYYY-MM-DD")}`,
       childId,
       subject: "Science",
+      teacher: "Mrs. Iyer",
       examType: "term",
       date: scienceTerm.format("YYYY-MM-DD"),
       examDate: scienceTerm.format("YYYY-MM-DD"),
@@ -245,6 +250,115 @@ function buildTimetableWeek(childId: string, today: dayjs.Dayjs = dayjs()): Time
       periods: buildDayPeriods(day),
     })),
   }
+}
+
+function buildBadgesForChild(childId: string, year: number): Badge[] {
+  const marchStart = dayjs(`${year}-03-01`)
+  const aprilStart = dayjs(`${year}-04-01`)
+
+  const kindnessDate = firstWeekdayOnOrAfter(marchStart.add(6, "day")).format("YYYY-MM-DD")
+  const teamworkDate = firstWeekdayOnOrAfter(aprilStart.add(2, "day")).format("YYYY-MM-DD")
+  const creativityDate = firstWeekdayOnOrAfter(aprilStart.add(9, "day")).format("YYYY-MM-DD")
+  const kindnessEncoreDate = firstWeekdayOnOrAfter(aprilStart.add(14, "day")).format("YYYY-MM-DD")
+  const focusDate = firstWeekdayOnOrAfter(aprilStart.add(18, "day")).format("YYYY-MM-DD")
+  const teamworkEncoreDate = firstWeekdayOnOrAfter(aprilStart.add(24, "day")).format("YYYY-MM-DD")
+
+  const kindness = badgeTypes.find((type) => type.id === "kindness-star")
+  const teamwork = badgeTypes.find((type) => type.id === "team-player")
+  const creativity = badgeTypes.find((type) => type.id === "creative-thinker")
+  const focus = badgeTypes.find((type) => type.id === "focused-learner")
+
+  if (!kindness || !teamwork || !creativity || !focus) {
+    return []
+  }
+
+  return [
+    {
+      id: `badge_${childId}_teamwork_encore_${teamworkEncoreDate}`,
+      childId,
+      badgeTypeId: teamwork.id,
+      title: teamwork.title,
+      icon: teamwork.icon,
+      tone: teamwork.tone,
+      awardedBy: {
+        teacherName: "Mr. Khan",
+        role: "Class Teacher",
+      },
+      comment: "Stepped in to help a quieter classmate join the group discussion and kept the team working kindly.",
+      awardedAt: teamworkEncoreDate,
+      isNew: true,
+    },
+    {
+      id: `badge_${childId}_focus_${focusDate}`,
+      childId,
+      badgeTypeId: focus.id,
+      title: focus.title,
+      icon: focus.icon,
+      tone: focus.tone,
+      awardedBy: {
+        teacherName: "Mrs. Iyer",
+        role: "Science Teacher",
+      },
+      comment: "Stayed deeply engaged during the simple machines activity and helped others settle quickly.",
+      awardedAt: focusDate,
+      isNew: true,
+    },
+    {
+      id: `badge_${childId}_kindness_encore_${kindnessEncoreDate}`,
+      childId,
+      badgeTypeId: kindness.id,
+      title: kindness.title,
+      icon: kindness.icon,
+      tone: kindness.tone,
+      awardedBy: {
+        teacherName: "Ms. Joseph",
+        role: "Library Teacher",
+      },
+      comment: "Offered to share materials and made sure everyone at the reading table felt included.",
+      awardedAt: kindnessEncoreDate,
+    },
+    {
+      id: `badge_${childId}_creative_${creativityDate}`,
+      childId,
+      badgeTypeId: creativity.id,
+      title: creativity.title,
+      icon: creativity.icon,
+      tone: creativity.tone,
+      awardedBy: {
+        teacherName: "Ms. Kulkarni",
+        role: "Art Teacher",
+      },
+      comment: "Brought a fresh idea to the poster task and explained the concept with confidence.",
+      awardedAt: creativityDate,
+    },
+    {
+      id: `badge_${childId}_teamwork_${teamworkDate}`,
+      childId,
+      badgeTypeId: teamwork.id,
+      title: teamwork.title,
+      icon: teamwork.icon,
+      tone: teamwork.tone,
+      awardedBy: {
+        teacherName: "Mr. Das",
+        role: "PE Teacher",
+      },
+      awardedAt: teamworkDate,
+    },
+    {
+      id: `badge_${childId}_kindness_${kindnessDate}`,
+      childId,
+      badgeTypeId: kindness.id,
+      title: kindness.title,
+      icon: kindness.icon,
+      tone: kindness.tone,
+      awardedBy: {
+        teacherName: "Ms. D'Souza",
+        role: "English Teacher",
+      },
+      comment: "Checked on a classmate who was feeling overwhelmed and quietly helped them get started.",
+      awardedAt: kindnessDate,
+    },
+  ]
 }
 
 type DayPatch = Pick<
@@ -383,12 +497,13 @@ export function generateAttendance(childId: string, year: number, lastDay: dayjs
 }
 
 export function generateSeedData(): SeedSchema {
-  const childId = "child_1"
+  const primaryChildId = "child_1"
+  const secondaryChildId = "child_2"
   const { year, lastDay } = springMarchAprilYearAndEnd()
   return {
     children: {
-      [childId]: {
-        id: childId,
+      [primaryChildId]: {
+        id: primaryChildId,
         name: "Aarav Mehta",
         photoUrl: "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=200&q=80",
         class: "Grade 6",
@@ -396,21 +511,40 @@ export function generateSeedData(): SeedSchema {
         rollNumber: "18",
         isActive: true,
       },
+      [secondaryChildId]: {
+        id: secondaryChildId,
+        name: "Mira Mehta",
+        photoUrl: "https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=200&q=80",
+        class: "Grade 3",
+        section: "C",
+        rollNumber: "07",
+        isActive: false,
+      },
     },
     attendance: {
-      [childId]: generateAttendance(childId, year, lastDay),
+      [primaryChildId]: generateAttendance(primaryChildId, year, lastDay),
+      [secondaryChildId]: generateAttendance(secondaryChildId, year, lastDay),
     },
     timetable: {
-      [childId]: buildTimetableWeek(childId),
+      [primaryChildId]: buildTimetableWeek(primaryChildId),
+      [secondaryChildId]: buildTimetableWeek(secondaryChildId),
     },
     exams: {
-      [childId]: buildExamsForChild(childId, year),
+      [primaryChildId]: buildExamsForChild(primaryChildId, year),
+      [secondaryChildId]: buildExamsForChild(secondaryChildId, year),
     },
     results: {},
-    badges: {},
+    badges: {
+      [primaryChildId]: buildBadgesForChild(primaryChildId, year),
+      [secondaryChildId]: [],
+    },
     learnSession: {
-      [childId]: {
-        childId,
+      [primaryChildId]: {
+        childId: primaryChildId,
+        isActive: false,
+      },
+      [secondaryChildId]: {
+        childId: secondaryChildId,
         isActive: false,
       },
     },

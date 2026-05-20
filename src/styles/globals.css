@@ -35,15 +35,15 @@
 }
 
 :root {
-  /* primitive brand tokens: update these first */
-  --brand-primary: #4f46e5;
-  --brand-primary-soft: #eef2ff;
-  --brand-accent: #aa3bff;
+  /* primitive tokens: neutral / wireframe base (no brand hue) */
+  --brand-primary: #171717;
+  --brand-primary-soft: #f4f4f5;
+  --brand-accent: #404040;
   --neutral-0: #ffffff;
-  --neutral-50: #f8fafc;
-  --neutral-200: #e5e7eb;
-  --neutral-500: #6b7280;
-  --neutral-900: #111827;
+  --neutral-50: #fafafa;
+  --neutral-200: #e5e5e5;
+  --neutral-500: #737373;
+  --neutral-900: #171717;
   --success-600: #16a34a;
   --warning-500: #f59e0b;
   --danger-600: #dc2626;
@@ -62,38 +62,42 @@
   --muted: var(--neutral-50);
   --muted-foreground: var(--neutral-500);
   --accent: var(--brand-primary-soft);
-  --accent-foreground: var(--brand-primary);
+  --accent-foreground: var(--neutral-900);
   --destructive: var(--danger-600);
   --border: var(--neutral-200);
   --input: var(--neutral-200);
-  --ring: color-mix(in srgb, var(--brand-primary) 45%, transparent);
+  --ring: color-mix(in srgb, var(--foreground) 22%, transparent);
   --status-success: var(--success-600);
   --status-warning: var(--warning-500);
   --status-danger: var(--danger-600);
-  --radius: 0.75rem;
-  --font-app-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --radius: 0.375rem;
+  --font-app-sans:
+    Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-app-heading: var(--font-app-sans);
 }
 
 .dark {
-  --background: #16171d;
-  --foreground: #f3f4f6;
-  --card: #1f2028;
-  --card-foreground: #f3f4f6;
-  --popover: #1f2028;
-  --popover-foreground: #f3f4f6;
-  --primary: #c084fc;
-  --primary-foreground: #120a1c;
-  --secondary: #2e303a;
-  --secondary-foreground: #f3f4f6;
-  --muted: #2e303a;
-  --muted-foreground: #9ca3af;
-  --accent: color-mix(in srgb, var(--brand-accent) 18%, transparent);
-  --accent-foreground: #f3e8ff;
+  --brand-primary: #fafafa;
+  --brand-primary-soft: #262626;
+  --brand-accent: #a3a3a3;
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --card: #141414;
+  --card-foreground: #fafafa;
+  --popover: #141414;
+  --popover-foreground: #fafafa;
+  --primary: #fafafa;
+  --primary-foreground: #0a0a0a;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #fafafa;
+  --muted: #1a1a1a;
+  --muted-foreground: #a3a3a3;
+  --accent: #262626;
+  --accent-foreground: #fafafa;
   --destructive: #f87171;
-  --border: #2e303a;
-  --input: #2e303a;
-  --ring: color-mix(in srgb, var(--primary) 45%, transparent);
+  --border: #2a2a2a;
+  --input: #2a2a2a;
+  --ring: color-mix(in srgb, var(--foreground) 30%, transparent);
 }
 
 @layer base {
@@ -124,179 +128,727 @@
 }
 
 @layer components {
-  .app-layout-root { @apply min-h-dvh bg-background; }
-  .app-layout-shell { @apply mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-background; }
-  .app-layout-header { @apply px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))]; }
-  .app-layout-header-row { @apply flex items-center justify-between gap-3; }
-  .app-layout-logo { @apply h-6 w-auto shrink-0; }
-  .app-layout-profile { @apply min-w-0 flex items-center justify-end gap-2; }
-  .app-layout-profile-info { @apply min-w-0 max-w-32 text-right leading-tight; }
-  .app-layout-profile-name { @apply truncate text-sm font-semibold text-foreground; }
-  .app-layout-profile-byline { @apply mt-0.5 truncate text-xs text-muted; }
-  .app-layout-profile-photo { @apply h-10 w-10 shrink-0 rounded-lg object-cover ring-1 ring-border; }
-  .app-layout-divider { @apply border-b border-border; }
-  .app-layout-main { @apply flex-1 overflow-y-auto overscroll-y-contain px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]; }
+  .app-layout-root {
+    @apply min-h-dvh bg-background;
+  }
+  .app-layout-shell {
+    @apply mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-background;
+  }
+  .app-layout-header {
+    @apply px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))];
+  }
+  .app-layout-header-row {
+    @apply flex items-center justify-between gap-3;
+  }
+  .app-layout-logo {
+    @apply h-6 w-auto shrink-0;
+  }
+  .app-layout-profile {
+    @apply min-w-0 flex items-center justify-end gap-2;
+  }
+  .app-layout-profile-info {
+    @apply min-w-0 max-w-32 text-right leading-tight;
+  }
+  .app-layout-profile-name {
+    @apply truncate text-sm font-semibold text-foreground;
+  }
+  .app-layout-profile-byline {
+    @apply mt-0.5 truncate text-xs text-muted;
+  }
+  .app-layout-profile-photo {
+    @apply h-10 w-10 shrink-0 rounded-md object-cover ring-1 ring-border;
+  }
+  .app-layout-divider {
+    @apply border-b border-border;
+  }
+  .app-layout-main {
+    @apply flex-1 overflow-y-auto overscroll-y-contain px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))];
+  }
 
-  .page-title { @apply mb-3; }
-  .page-title-heading { @apply text-[1.0625rem] leading-snug font-semibold text-foreground; }
-  .page-title-subtitle { @apply mt-1 text-[0.8125rem] leading-relaxed text-muted; }
+  .page-title {
+    @apply mb-3;
+  }
+  .page-title-heading {
+    @apply text-[1.0625rem] leading-snug font-semibold text-foreground;
+  }
+  .page-title-subtitle {
+    @apply mt-1 text-[0.8125rem] leading-relaxed text-muted;
+  }
 
-  .section-tabs-nav { @apply -mx-4 mb-3 flex overflow-x-auto px-4 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden; }
-  .section-tabs-list { @apply flex min-w-max gap-2; }
-  .section-tabs-link { @apply inline-flex h-8 shrink-0 items-center justify-center rounded-full border border-border bg-background px-3 text-[0.8125rem] font-medium text-muted transition-colors; }
-  .section-tabs-link[data-active="true"] { @apply border-primary bg-primary text-primary-foreground shadow-[0_4px_12px_rgba(79,70,229,0.28)]; }
+  .section-tabs-nav {
+    @apply -mx-4 mb-3 flex overflow-x-auto px-4 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+  }
+  .section-tabs-list {
+    @apply flex min-w-max gap-2;
+  }
+  .section-tabs-link {
+    @apply inline-flex h-8 shrink-0 items-center justify-center rounded-md border border-border bg-background px-3 text-[0.8125rem] font-medium text-muted transition-colors;
+  }
+  .section-tabs-link[data-active="true"] {
+    @apply border-foreground/80 bg-muted/50 font-semibold text-foreground shadow-none;
+  }
 
-  .attendance-section-loading { @apply mb-3 text-[0.8125rem] text-muted; }
-  .attendance-section-grid { @apply grid gap-5; }
-  .attendance-section-stack { @apply space-y-5; }
+  .attendance-section-loading {
+    @apply mb-3 text-[0.8125rem] text-muted;
+  }
+  .attendance-section-grid {
+    @apply grid gap-5;
+  }
+  .attendance-section-stack {
+    @apply space-y-5;
+  }
 
-  .attendance-header { @apply mb-3 space-y-3; }
-  .attendance-header-title { @apply text-[0.75rem] font-semibold uppercase tracking-wide text-muted; }
-  .attendance-header-row { @apply grid grid-cols-3 items-center; }
-  .attendance-header-nav-cell { @apply flex; }
-  .attendance-header-nav-cell-left { @apply justify-start; }
-  .attendance-header-nav-cell-right { @apply justify-end; }
-  .attendance-header-month { @apply text-center text-[0.8125rem] font-medium text-muted; }
-  .attendance-header-icon { @apply h-4 w-4; }
+  .attendance-header {
+    @apply mb-3 space-y-3;
+  }
+  .attendance-header-title {
+    @apply text-[0.75rem] font-semibold uppercase tracking-wide text-muted;
+  }
+  .attendance-header-row {
+    @apply grid grid-cols-3 items-center;
+  }
+  .attendance-header-nav-cell {
+    @apply flex;
+  }
+  .attendance-header-nav-cell-left {
+    @apply justify-start;
+  }
+  .attendance-header-nav-cell-right {
+    @apply justify-end;
+  }
+  .attendance-header-month {
+    @apply text-center text-[0.8125rem] font-medium text-muted;
+  }
+  .attendance-header-icon {
+    @apply h-4 w-4;
+  }
 
-  .attendance-calendar { @apply px-2 py-2; }
-  .attendance-calendar-day-header-row { @apply mb-3 grid grid-cols-7 gap-2; }
-  .attendance-calendar-day-header { @apply text-center text-[0.6875rem] font-semibold uppercase tracking-wide text-muted; }
-  .calendar-grid { @apply space-y-2; }
-  .calendar-row { @apply grid grid-cols-7 gap-2; }
-  .calendar-cell-button { @apply flex h-14 w-full touch-manipulation flex-col items-center justify-center gap-1 rounded-xl bg-card p-1.5 text-sm font-medium transition active:scale-[0.97]; }
-  .calendar-cell-status-present { @apply bg-green-100; }
-  .calendar-cell-status-absent { @apply bg-red-100; }
-  .calendar-cell-status-late { @apply bg-amber-100; }
-  .calendar-cell-status-none { @apply bg-transparent; }
-  .calendar-cell-outside-month { @apply opacity-35; }
-  .calendar-cell-today { @apply border-2 border-primary bg-primary/5; }
-  .calendar-cell-disabled { @apply cursor-not-allowed opacity-60 active:scale-100; }
-  .calendar-cell-day { @apply text-sm; }
-  .calendar-cell-day-present { @apply text-green-900; }
-  .calendar-cell-day-absent { @apply text-red-900; }
-  .calendar-cell-day-late { @apply text-amber-900; }
-  .calendar-cell-day-muted { @apply text-gray-400; }
-  .calendar-cell-day-subtle { @apply text-gray-300; }
-  .calendar-cell-icon { @apply h-4 w-4 shrink-0; }
-  .calendar-cell-icon-present { @apply text-green-600; }
-  .calendar-cell-icon-absent { @apply text-red-600; }
-  .calendar-cell-icon-late { @apply text-amber-500; }
-  .calendar-cell-icon-muted { @apply text-gray-400; }
-  .calendar-cell-icon-subtle { @apply text-gray-300; }
+  .attendance-calendar {
+    @apply px-2 py-2;
+  }
+  .attendance-calendar-day-header-row {
+    @apply mb-3 grid grid-cols-7 gap-2;
+  }
+  .attendance-calendar-day-header {
+    @apply text-center text-[0.6875rem] font-semibold uppercase tracking-wide text-muted;
+  }
+  .calendar-grid {
+    @apply space-y-2;
+  }
+  .calendar-row {
+    @apply grid grid-cols-7 gap-2;
+  }
+  .calendar-cell-button {
+    @apply flex h-14 w-full touch-manipulation flex-col items-center justify-center gap-1 rounded-md border border-border/80 bg-card p-1.5 text-sm font-medium shadow-none transition active:scale-[0.97];
+  }
+  .calendar-cell-status-present {
+    @apply border-green-300/80 bg-green-50;
+  }
+  .calendar-cell-status-absent {
+    @apply border-red-300/80 bg-red-50;
+  }
+  .calendar-cell-status-late {
+    @apply border-amber-300/80 bg-amber-50;
+  }
+  .calendar-cell-status-none {
+    @apply border-border/60 bg-muted/20;
+  }
+  .calendar-cell-outside-month {
+    @apply opacity-35;
+  }
+  .calendar-cell-today {
+    @apply z-[1] ring-2 ring-inset ring-foreground/45;
+  }
+  /* Disabled: readable text (AA) + clear "inactive" affordances — no whole-cell opacity */
+  .calendar-cell-disabled {
+    @apply cursor-not-allowed border-dashed font-normal active:scale-100;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 5px,
+      color-mix(in srgb, var(--foreground) 7%, transparent) 5px,
+      color-mix(in srgb, var(--foreground) 7%, transparent) 6px
+    );
+  }
+  .calendar-cell-disabled.calendar-cell-today {
+    background-image: none;
+  }
+  .calendar-cell-disabled.calendar-cell-status-none {
+    @apply border-border/45 bg-muted/10;
+  }
+  .calendar-cell-disabled.calendar-cell-status-present {
+    @apply border-green-300/50 bg-green-50/25;
+  }
+  .calendar-cell-disabled.calendar-cell-status-absent {
+    @apply border-red-300/50 bg-red-50/25;
+  }
+  .calendar-cell-disabled.calendar-cell-status-late {
+    @apply border-amber-300/50 bg-amber-50/25;
+  }
+  .calendar-cell-disabled.calendar-cell-outside-month {
+    @apply border-border/30 bg-transparent;
+    opacity: 0.42;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 5px,
+      color-mix(in srgb, var(--foreground) 5%, transparent) 5px,
+      color-mix(in srgb, var(--foreground) 5%, transparent) 6px
+    );
+  }
+  .calendar-cell-disabled .calendar-cell-day-muted,
+  .calendar-cell-disabled .calendar-cell-day-subtle {
+    @apply text-neutral-600 dark:text-neutral-400;
+  }
+  .calendar-cell-disabled .calendar-cell-day-present {
+    @apply text-green-800 dark:text-green-400;
+  }
+  .calendar-cell-disabled .calendar-cell-day-absent {
+    @apply text-red-800 dark:text-red-400;
+  }
+  .calendar-cell-disabled .calendar-cell-day-late {
+    @apply text-amber-800 dark:text-amber-400;
+  }
+  .calendar-cell-disabled .calendar-cell-icon-muted,
+  .calendar-cell-disabled .calendar-cell-icon-subtle {
+    @apply text-neutral-600 dark:text-neutral-400;
+  }
+  .calendar-cell-disabled .calendar-cell-icon-present {
+    @apply text-green-700 dark:text-green-400;
+  }
+  .calendar-cell-disabled .calendar-cell-icon-absent {
+    @apply text-red-700 dark:text-red-400;
+  }
+  .calendar-cell-disabled .calendar-cell-icon-late {
+    @apply text-amber-700 dark:text-amber-400;
+  }
+  .calendar-cell-disabled .calendar-cell-icon {
+    @apply opacity-65;
+  }
+  .calendar-cell-day {
+    @apply text-sm;
+  }
+  .calendar-cell-day-present {
+    @apply text-green-900;
+  }
+  .calendar-cell-day-absent {
+    @apply text-red-900;
+  }
+  .calendar-cell-day-late {
+    @apply text-amber-900;
+  }
+  .calendar-cell-day-muted {
+    @apply text-gray-400;
+  }
+  .calendar-cell-day-subtle {
+    @apply text-gray-300;
+  }
+  .calendar-cell-icon {
+    @apply h-4 w-4 shrink-0;
+  }
+  .calendar-cell-icon-present {
+    @apply text-green-600;
+  }
+  .calendar-cell-icon-absent {
+    @apply text-red-600;
+  }
+  .calendar-cell-icon-late {
+    @apply text-amber-500;
+  }
+  .calendar-cell-icon-muted {
+    @apply text-gray-400;
+  }
+  .calendar-cell-icon-subtle {
+    @apply text-gray-300;
+  }
 
-  .attendance-summary { @apply space-y-3 border-b border-border/50 pb-4; }
-  .attendance-summary-title { @apply text-[0.75rem] font-semibold uppercase tracking-wide text-muted; }
-  .attendance-summary-chips { @apply flex flex-wrap gap-1.5 text-[0.75rem]; }
-  .attendance-summary-chip { @apply rounded-full px-2.5 py-1 font-medium; }
-  .attendance-summary-chip-present { @apply bg-green-50 text-green-600; }
-  .attendance-summary-chip-absent { @apply bg-red-50 text-red-700; }
-  .attendance-summary-chip-late { @apply bg-amber-50 text-amber-700; }
-  .attendance-summary-progress { @apply flex h-1.5 overflow-hidden rounded-full bg-muted/80; }
-  .attendance-summary-progress-segment { @apply h-full; }
-  .attendance-summary-progress-absent { @apply bg-red-500; }
-  .attendance-summary-progress-late { @apply bg-amber-500; }
-  .attendance-summary-progress-present { @apply bg-green-500; }
+  .attendance-summary {
+    @apply space-y-3 border-b border-border/50 pb-4;
+  }
+  .attendance-summary-title {
+    @apply text-[0.75rem] font-semibold uppercase tracking-wide text-muted;
+  }
+  .attendance-summary-chips {
+    @apply flex flex-wrap gap-1.5 text-[0.75rem];
+  }
+  .attendance-summary-chip {
+    @apply rounded-full border border-dashed border-foreground/40 bg-transparent px-2.5 py-1 font-medium text-foreground;
+  }
+  .attendance-summary-progress {
+    @apply flex h-2 overflow-hidden rounded-full bg-muted/80;
+  }
+  .attendance-summary-progress-segment {
+    @apply h-full;
+  }
+  .attendance-summary-progress-absent {
+    @apply bg-red-500;
+  }
+  .attendance-summary-progress-late {
+    @apply bg-amber-500;
+  }
+  .attendance-summary-progress-present {
+    @apply bg-green-500;
+  }
 
-  .attendance-anomalies { @apply bg-background; }
-  .attendance-anomalies-title { @apply mb-3 text-[0.75rem] font-semibold uppercase tracking-wide text-muted; }
-  .attendance-anomalies-empty { @apply text-[0.8125rem] text-muted; }
-  .attendance-anomalies-list { @apply space-y-3; }
-  .attendance-anomalies-item { @apply flex min-h-11 items-start justify-between gap-3 rounded-lg border border-border/60 px-3 py-2 text-[0.8125rem]; }
-  .attendance-anomalies-item-left { @apply flex flex-col gap-0.5; }
-  .attendance-anomalies-item-right { @apply flex flex-col items-end gap-1 text-right; }
-  .attendance-anomalies-date { @apply font-medium text-foreground; }
-  .attendance-anomalies-status { @apply capitalize text-muted; }
-  .attendance-anomalies-action-note { @apply text-muted; }
-  .attendance-anomalies-action-link { @apply text-[0.75rem] font-medium text-primary underline-offset-2 hover:underline; }
-  .attendance-anomalies-action-success { @apply text-[0.75rem] font-medium text-green-700; }
-  .attendance-anomalies-action-info { @apply text-[0.75rem] text-muted; }
+  .attendance-anomalies {
+    @apply bg-background;
+  }
+  .attendance-anomalies-title {
+    @apply mb-3 text-[0.75rem] font-semibold uppercase tracking-wide text-muted;
+  }
+  .attendance-anomalies-empty {
+    @apply text-[0.8125rem] text-muted;
+  }
+  .attendance-anomalies-list {
+    @apply space-y-3;
+  }
+  .attendance-anomalies-item {
+    @apply flex min-h-11 items-start justify-between gap-3 rounded-lg border border-border/60 px-3 py-2 text-[0.8125rem];
+  }
+  .attendance-anomalies-item-left {
+    @apply flex flex-col gap-0.5;
+  }
+  .attendance-anomalies-item-right {
+    @apply flex flex-col items-end gap-1 text-right;
+  }
+  .attendance-anomalies-date {
+    @apply font-medium text-foreground;
+  }
+  .attendance-anomalies-status {
+    @apply capitalize text-muted;
+  }
+  .attendance-anomalies-action-note {
+    @apply text-muted;
+  }
+  .attendance-anomalies-action-link {
+    @apply text-[0.75rem] font-medium text-foreground underline decoration-foreground/30 underline-offset-2 hover:decoration-foreground/60;
+  }
+  .attendance-anomalies-action-info {
+    @apply text-[0.75rem] text-muted;
+  }
 
-  .timetable-section { @apply space-y-2; }
-  .timetable-day-selector { @apply -mx-2 flex gap-4 overflow-x-auto px-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden; }
-  .timetable-day-filter { @apply inline-flex h-8 shrink-0 items-center border-b-2 border-transparent px-0 text-[0.875rem] text-muted transition-colors; }
-  .timetable-day-filter[data-active="true"] { @apply border-primary font-medium text-primary; }
-  .timetable-period-list { @apply divide-y divide-border/60; }
-  .timetable-period-row { @apply flex w-full gap-4 py-3 text-left transition-colors; }
-  .timetable-period-row[data-current="true"] { @apply border-l-2 border-primary bg-primary/5 pl-2; }
-  .timetable-period-time-column { @apply w-16 shrink-0 text-[0.75rem] leading-tight text-muted; }
-  .timetable-period-time-start { @apply font-medium text-foreground; }
-  .timetable-period-time-end { @apply mt-1; }
-  .timetable-period-content { @apply min-w-0 flex-1; }
-  .timetable-period-subject-row { @apply flex items-center justify-between gap-2; }
-  .timetable-period-subject { @apply text-[0.9375rem] font-semibold text-foreground; }
-  .timetable-period-now-tag { @apply text-[0.6875rem] font-medium text-primary; }
-  .timetable-period-teacher { @apply mt-0.5 text-[0.8125rem] text-muted; }
-  .timetable-break-row { @apply py-2 text-center; }
-  .timetable-break-label { @apply text-[0.75rem] text-muted; }
-  .timetable-empty-state { @apply rounded-lg border border-dashed border-border bg-muted/30 px-3 py-4 text-[0.8125rem] text-muted; }
+  .timetable-section {
+    @apply space-y-2;
+  }
+  .timetable-view-toggle {
+    @apply -mx-1 mb-2 flex gap-5 overflow-x-auto border-b border-border/80 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+  }
+  .timetable-view-toggle-item {
+    @apply relative inline-flex h-9 shrink-0 items-center justify-center border-b-2 border-transparent px-0 text-[0.8125rem] font-medium text-muted transition-colors;
+  }
+  .timetable-view-toggle-item[data-active="true"] {
+    @apply border-foreground font-semibold text-foreground;
+  }
+  .timetable-week-actions {
+    @apply flex flex-col gap-3 rounded-lg border border-border/60 bg-card px-3 py-3 md:flex-row md:items-center md:justify-between;
+  }
+  .timetable-week-actions-copy {
+    @apply flex items-start gap-2.5;
+  }
+  .timetable-week-actions-icon {
+    @apply mt-0.5 size-4 shrink-0 text-muted;
+  }
+  .timetable-week-actions-eyebrow {
+    @apply text-[0.8125rem] font-semibold text-foreground;
+  }
+  .timetable-week-actions-note {
+    @apply mt-1 max-w-xl text-[0.75rem] leading-snug text-muted;
+  }
+  .timetable-week-actions .ui-button {
+    @apply w-full md:w-auto;
+  }
+  .timetable-week-container {
+    @apply overflow-hidden rounded-lg border border-border/50 bg-card;
+  }
+  .timetable-week-grid-wrapper {
+    @apply overflow-x-hidden;
+  }
+  .timetable-week-grid {
+    @apply flex w-full flex-col;
+  }
+  .timetable-week-grid-header {
+    @apply sticky top-0 z-20 flex border-b border-border/45 bg-card/95 backdrop-blur-sm;
+  }
+  .timetable-week-grid-time-column-header {
+    @apply sticky left-0 z-30 w-9 shrink-0 border-r border-border/50 bg-card shadow-[4px_0_8px_-10px_rgba(0,0,0,0.5)];
+  }
+  .timetable-week-grid-day-header {
+    @apply min-w-0 flex-1 border-r border-border/35 px-1 py-1.5 last:border-r-0;
+  }
+  .timetable-week-grid-day-header[data-is-today="true"] {
+    @apply bg-muted/45;
+  }
+  .timetable-week-grid-day-label-wrapper {
+    @apply flex flex-col items-start gap-px;
+  }
+  .timetable-week-grid-day-label {
+    @apply text-[0.68rem] leading-none font-semibold text-foreground;
+  }
+  .timetable-week-grid-rows {
+    @apply divide-y divide-border/40 bg-muted/10;
+  }
+  .timetable-week-grid-row {
+    @apply relative flex min-h-[2.85rem] border-b border-border/30 last:border-b-0;
+  }
+  .timetable-week-grid-time-column {
+    @apply sticky left-0 z-10 flex w-9 shrink-0 items-start justify-end border-r border-border/50 bg-card px-0.5 py-1.5 shadow-[4px_0_8px_-10px_rgba(0,0,0,0.5)];
+  }
+  .timetable-week-grid-time-label {
+    @apply text-[0.56rem] font-medium leading-tight text-muted;
+  }
+  .timetable-week-grid-cell {
+    @apply min-w-0 flex-1 border-r border-border/30 p-0.5 last:border-r-0;
+  }
+  .timetable-week-grid-cell[data-is-today="true"] {
+    @apply bg-muted/15;
+  }
+  .timetable-week-period-card {
+    @apply relative flex min-h-[2.05rem] w-full cursor-pointer items-start rounded-md border border-border/55 bg-card px-1 py-0.75 text-left transition-colors hover:bg-muted/20 active:bg-muted/35;
+  }
+  .timetable-week-period-card[data-current="true"] {
+    @apply border-foreground/45 bg-foreground/4 ring-0 shadow-none;
+  }
+  .timetable-week-period-card[data-is-break="true"] {
+    @apply italic opacity-60 border-dashed border-border/40 bg-muted/20;
+  }
+  .timetable-week-period-subject {
+    @apply text-[0.56rem] leading-[1.05] font-semibold text-foreground;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-wrap: balance;
+    word-break: break-word;
+  }
+  .timetable-week-break-label {
+    @apply text-[0.56rem] leading-tight font-medium text-muted italic;
+  }
+  .timetable-week-current-time-indicator {
+    @apply pointer-events-none absolute left-9 right-0 z-[5] h-px -translate-y-1/2 bg-foreground/40;
+  }
+  .timetable-day-selector {
+    @apply -mx-2 flex gap-4 overflow-x-auto px-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+  }
+  .timetable-day-filter {
+    @apply inline-flex h-8 shrink-0 items-center border-b-2 border-transparent px-0 text-[0.875rem] text-muted transition-colors;
+  }
+  .timetable-day-filter[data-active="true"] {
+    @apply border-foreground font-semibold text-foreground;
+  }
+  .timetable-day-selector[data-variant="subtle"] {
+    @apply -mx-0 gap-5 px-0;
+  }
+  .timetable-day-filter[data-variant="subtle"] {
+    @apply border-b-0 text-[1.0625rem] text-gray-400;
+  }
+  .timetable-day-filter[data-variant="subtle"][data-active="true"] {
+    @apply text-foreground;
+  }
+  .timetable-period-list {
+    @apply divide-y divide-border/60;
+  }
+  .timetable-period-row {
+    @apply flex w-full gap-4 py-3 text-left transition-colors;
+  }
+  .timetable-period-row[data-current="true"] {
+    @apply border-l-2 border-foreground bg-muted/40 pl-2;
+  }
+  .timetable-period-time-column {
+    @apply w-16 shrink-0 text-[0.75rem] leading-tight text-muted;
+  }
+  .timetable-period-time-start {
+    @apply font-medium text-foreground;
+  }
+  .timetable-period-time-end {
+    @apply mt-1;
+  }
+  .timetable-period-content {
+    @apply min-w-0 flex-1;
+  }
+  .timetable-period-subject-row {
+    @apply flex items-center justify-between gap-2;
+  }
+  .timetable-period-subject {
+    @apply text-[0.9375rem] font-semibold text-foreground;
+  }
+  .timetable-period-now-tag {
+    @apply text-[0.6875rem] font-medium text-foreground/80;
+  }
+  .timetable-period-teacher {
+    @apply mt-0.5 text-[0.8125rem] text-muted;
+  }
+  .timetable-break-row {
+    @apply py-2 text-center;
+  }
+  .timetable-break-label {
+    @apply text-[0.75rem] text-muted;
+  }
+  .timetable-empty-state {
+    @apply rounded-lg border border-dashed border-border bg-muted/30 px-3 py-4 text-[0.8125rem] text-muted;
+  }
 
-  .sheet-root { @apply fixed inset-0 z-[1000]; }
-  .sheet-backdrop { @apply absolute inset-0 bg-black/45; }
-  .sheet-content { @apply fixed z-[1001] bg-card p-4 shadow-xl; }
-  .sheet-content-top { @apply inset-x-0 top-0 border-b border-border; }
-  .sheet-content-right { @apply inset-y-0 right-0 h-full w-[90vw] max-w-sm border-l border-border; }
-  .sheet-content-left { @apply inset-y-0 left-0 h-full w-[90vw] max-w-sm border-r border-border; }
-  .sheet-content-bottom { @apply inset-x-0 bottom-0 max-h-[90dvh] overflow-y-auto rounded-t-3xl border-t border-border px-4 pt-5 pb-[calc(1.75rem+env(safe-area-inset-bottom))]; }
-  .attendance-sheet-grabber { @apply mx-auto mb-4 h-1.5 w-12 rounded-full bg-muted; }
-  .attendance-sheet-body { @apply space-y-3 text-sm; }
-  .attendance-sheet-title { @apply text-base font-semibold text-foreground; }
-  .attendance-sheet-grid-two { @apply grid grid-cols-2 gap-2; }
-  .attendance-sheet-data-card { @apply rounded-lg border border-border bg-card p-3; }
-  .attendance-sheet-label { @apply text-xs text-muted; }
-  .attendance-sheet-value { @apply font-medium text-foreground; }
-  .attendance-sheet-value-break { @apply break-words; }
-  .attendance-sheet-capitalize { @apply capitalize; }
-  .attendance-sheet-warning { @apply text-sm text-amber-700; }
-  .attendance-sheet-note-editor { @apply space-y-2 rounded-lg border border-border bg-card p-3; }
-  .attendance-sheet-note-copy { @apply text-sm text-muted; }
-  .attendance-sheet-submitted-note { @apply mt-1 text-sm text-foreground; }
+  .sheet-root {
+    @apply fixed inset-0 z-[1000];
+  }
+  .sheet-backdrop {
+    @apply absolute inset-0 bg-black/45;
+  }
+  .sheet-content {
+    @apply fixed z-[1001] border-border bg-card p-4 shadow-none ring-1 ring-border;
+  }
+  .sheet-content-top {
+    @apply inset-x-0 top-0 border-b border-border;
+  }
+  .sheet-content-right {
+    @apply inset-y-0 right-0 h-full w-[90vw] max-w-sm border-l border-border;
+  }
+  .sheet-content-left {
+    @apply inset-y-0 left-0 h-full w-[90vw] max-w-sm border-r border-border;
+  }
+  .sheet-content-bottom {
+    @apply inset-x-0 bottom-0 max-h-[90dvh] overflow-y-auto rounded-t-lg border-t border-border px-4 pt-5 pb-[calc(1.75rem+env(safe-area-inset-bottom))];
+  }
+  .attendance-sheet-grabber {
+    @apply mx-auto mb-4 h-1.5 w-12 rounded-full bg-muted;
+  }
+  .attendance-sheet-body {
+    @apply space-y-3 text-sm;
+  }
+  .attendance-sheet-title {
+    @apply text-base font-semibold text-foreground;
+  }
+  .attendance-sheet-grid-two {
+    @apply grid grid-cols-2 gap-2;
+  }
+  .attendance-sheet-data-card {
+    @apply rounded-lg border border-border bg-card p-3;
+  }
+  .attendance-sheet-label {
+    @apply text-xs text-muted;
+  }
+  .attendance-sheet-value {
+    @apply font-medium text-foreground;
+  }
+  .attendance-sheet-value-break {
+    @apply break-words;
+  }
+  .attendance-sheet-capitalize {
+    @apply capitalize;
+  }
+  .attendance-sheet-warning {
+    @apply text-sm text-amber-700;
+  }
+  .attendance-sheet-note-editor {
+    @apply space-y-2 rounded-lg border border-border bg-card p-3;
+  }
+  .attendance-sheet-note-copy {
+    @apply text-sm text-muted;
+  }
+  .attendance-sheet-submitted-note {
+    @apply mt-1 text-sm text-foreground;
+  }
 
-  .screen-card-title { @apply mb-2 text-[0.9375rem] font-semibold text-foreground; }
-  .screen-card-copy { @apply text-[0.8125rem] leading-relaxed text-muted; }
-  .ui-button { @apply inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-transparent bg-primary px-4 py-2.5 text-sm font-medium whitespace-nowrap text-primary-foreground transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0; }
-  .ui-button[data-variant="ghost"] { @apply bg-transparent text-foreground hover:bg-muted; }
-  .ui-card { @apply flex flex-col gap-4 overflow-hidden rounded-xl bg-card py-4 text-sm text-card-foreground ring-1 ring-foreground/10; }
-  .ui-card-header { @apply grid auto-rows-min items-start gap-1 rounded-t-xl px-4; }
-  .ui-card-title { @apply font-heading text-base leading-snug font-medium; }
-  .ui-card-description { @apply text-sm text-muted-foreground; }
-  .ui-card-action { @apply col-start-2 row-span-2 row-start-1 self-start justify-self-end; }
-  .ui-card-content { @apply px-4; }
-  .ui-card-footer { @apply flex items-center rounded-b-xl border-t bg-muted/50 p-4; }
-  .ui-textarea { @apply flex field-sizing-content min-h-16 w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40; }
-  .info-sheet { @apply rounded-xl border border-border bg-muted p-4; }
-  .info-sheet-title { @apply mb-3 text-sm font-semibold uppercase tracking-wide text-muted; }
-  .exams-section { @apply space-y-2 pb-6; }
-  .exams-text-switcher { @apply flex items-center justify-end gap-4 pb-1; }
-  .exams-text-switcher-item { @apply text-sm text-gray-400; }
-  .exams-text-switcher-item[data-active="true"] { @apply font-medium text-primary; }
-  .exams-empty-state { @apply rounded-lg border border-dashed border-border bg-muted/30 px-3 py-4 text-[0.8125rem] text-muted; }
-  .upcoming-list { @apply space-y-0; }
-  .upcoming-date-group { @apply mt-6; }
-  .upcoming-date-group:first-child { @apply mt-2; }
-  .upcoming-date-header { @apply mb-2 text-xs font-medium tracking-wide text-gray-500 uppercase; }
-  .upcoming-date-rows { @apply space-y-0; }
-  .exam-row { @apply block w-full border-b border-gray-100 py-3 text-left transition-colors hover:bg-gray-50 active:scale-[0.98]; }
-  .upcoming-date-rows .exam-row:last-child { @apply border-b-0; }
-  .exam-row-main { @apply flex items-center justify-between gap-2; }
-  .exam-row-indicator { @apply mr-3 h-4 w-1 shrink-0 rounded-full bg-primary/30; }
-  .exam-row-left { @apply min-w-0 flex-1; }
-  .exam-row-subject { @apply truncate text-[0.875rem] font-medium text-foreground; }
-  .exam-row-period { @apply mt-0.5 text-xs text-gray-400; }
-  .exam-row-link { @apply shrink-0 text-sm text-primary underline-offset-2 hover:underline; }
-  .results-list { @apply divide-y divide-border/50; }
-  .result-card { @apply block w-full py-3 text-left; }
-  .result-card-main { @apply flex items-start justify-between gap-2; }
-  .result-card-left { @apply min-w-0; }
-  .result-card-score-subject-row { @apply flex items-baseline gap-2; }
-  .result-card-score { @apply text-[1.375rem] leading-none font-semibold text-primary; }
-  .result-card-name { @apply text-[0.875rem] font-medium text-foreground; }
-  .result-card-grade { @apply mt-1 text-[0.75rem] text-muted; }
-  .result-card-date { @apply shrink-0 text-[0.75rem] text-muted; }
-  .exam-sheet-bullets { @apply mt-2 list-disc space-y-1 pl-5 text-sm text-foreground; }
-  .exam-sheet-results-table { @apply mt-2 space-y-2; }
-  .exam-sheet-results-row { @apply grid grid-cols-[1fr_auto_auto] items-center gap-2 text-sm; }
-  .exam-sheet-results-subject { @apply font-medium text-foreground; }
-  .exam-sheet-results-score { @apply text-muted; }
-  .exam-sheet-results-grade { @apply text-right font-medium text-foreground; }
+  .screen-card-title {
+    @apply mb-2 text-[0.9375rem] font-semibold text-foreground;
+  }
+  .screen-card-copy {
+    @apply text-[0.8125rem] leading-relaxed text-muted;
+  }
+  .ui-button {
+    @apply inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-md border border-foreground/15 bg-primary px-4 py-2.5 text-sm font-medium whitespace-nowrap text-primary-foreground transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0;
+  }
+  .ui-button[data-variant="secondary"] {
+    @apply border-foreground/15 bg-white text-black hover:bg-muted/20;
+  }
+  .ui-button[data-variant="ghost"] {
+    @apply border-transparent bg-transparent text-foreground hover:bg-muted;
+  }
+  .ui-button[data-size="sm"] {
+    @apply h-9 gap-1 px-3 py-1.5 text-xs [&_svg]:size-3.5;
+  }
+  .ui-card {
+    @apply flex flex-col gap-4 overflow-hidden rounded-md border border-border bg-card py-4 text-sm text-card-foreground shadow-none;
+  }
+  .ui-card-header {
+    @apply grid auto-rows-min items-start gap-1 rounded-t-md px-4;
+  }
+  .ui-card-title {
+    @apply font-heading text-base leading-snug font-medium;
+  }
+  .ui-card-description {
+    @apply text-sm text-muted-foreground;
+  }
+  .ui-card-action {
+    @apply col-start-2 row-span-2 row-start-1 self-start justify-self-end;
+  }
+  .ui-card-content {
+    @apply px-4;
+  }
+  .ui-card-footer {
+    @apply flex items-center rounded-b-md border-t bg-muted/50 p-4;
+  }
+  .ui-textarea {
+    @apply flex field-sizing-content min-h-16 w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40;
+  }
+  .info-sheet {
+    @apply rounded-md border border-border bg-muted p-4;
+  }
+  .info-sheet-title {
+    @apply mb-3 text-sm font-semibold uppercase tracking-wide text-muted;
+  }
+  .exams-section {
+    @apply space-y-2 pb-6;
+  }
+  .exams-empty-state {
+    @apply rounded-lg border border-dashed border-border bg-muted/30 px-3 py-4 text-[0.8125rem] text-muted;
+  }
+  .results-list {
+    @apply divide-y divide-border/70;
+  }
+  .exam-list-card {
+    @apply block w-full py-3 text-left transition-colors hover:bg-muted/50 active:scale-[0.98];
+  }
+  .exam-list-card-main {
+    @apply grid grid-cols-[3.75rem_1fr_auto] items-start gap-3;
+  }
+  .exam-list-card-left {
+    @apply pt-0.5;
+  }
+  .exam-list-card-date {
+    @apply text-[0.8125rem] font-medium text-foreground/80;
+  }
+  .exam-list-card-middle {
+    @apply min-w-0;
+  }
+  .exam-list-card-title {
+    @apply truncate text-[0.9375rem] font-semibold text-foreground;
+  }
+  .exam-list-card-byline {
+    @apply mt-1 text-xs text-foreground/70;
+  }
+  .exam-list-card-right {
+    @apply flex min-w-[5.5rem] flex-col items-end gap-1;
+  }
+  .exam-list-card-right-primary {
+    @apply text-[1rem] leading-none font-semibold text-foreground;
+  }
+  .exam-list-card-right-primary.cta {
+    @apply text-sm font-medium text-foreground underline decoration-foreground/25 underline-offset-2 hover:decoration-foreground/50;
+  }
+  .exam-list-card-right-secondary {
+    @apply text-[0.75rem] text-foreground/70;
+  }
+  .exam-list-card-chip {
+    @apply rounded-md border border-border bg-muted/60 px-2 py-0.5 text-[0.625rem] font-semibold tracking-wide text-foreground/80 uppercase;
+  }
+  .exam-sheet-bullets {
+    @apply mt-2 list-disc space-y-1 pl-5 text-sm text-foreground;
+  }
+  .exam-sheet-results-table {
+    @apply mt-2 space-y-2;
+  }
+  .exam-sheet-results-row {
+    @apply grid grid-cols-[1fr_auto_auto] items-center gap-2 text-sm;
+  }
+  .exam-sheet-results-subject {
+    @apply font-medium text-foreground;
+  }
+  .exam-sheet-results-score {
+    @apply text-muted;
+  }
+  .exam-sheet-results-grade {
+    @apply text-right font-medium text-foreground;
+  }
+
+  .badges-section {
+    @apply space-y-3 pb-6;
+  }
+  .badges-header {
+    @apply rounded-lg border border-border bg-muted/30 px-4 py-4;
+  }
+  .badges-title {
+    @apply text-[1rem] font-semibold text-foreground;
+  }
+  .badges-copy {
+    @apply mt-1 text-[0.8125rem] leading-relaxed text-foreground/75;
+  }
+  .badges-loading {
+    @apply text-[0.8125rem] text-muted;
+  }
+  .badges-list {
+    @apply space-y-3;
+  }
+  .badges-empty-state {
+    @apply flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 px-4 py-8 text-center;
+  }
+  .badges-empty-state-icon {
+    @apply mb-3 text-3xl grayscale;
+  }
+  .badges-empty-state-copy {
+    @apply max-w-52 text-[0.875rem] leading-relaxed text-muted;
+  }
+
+  .badge-card {
+    @apply flex w-full items-start gap-3 rounded-lg border border-border bg-card px-4 py-4 text-left transition-transform transition-colors hover:bg-muted/40 active:scale-[0.99];
+  }
+  .badge-card-icon {
+    @apply flex h-12 w-12 shrink-0 items-center justify-center rounded-md border border-border bg-muted/40 text-foreground;
+  }
+  .badge-card-icon[data-tone="sun"],
+  .badge-sheet-icon[data-tone="sun"] {
+    @apply bg-muted/40 text-foreground;
+  }
+  .badge-card-icon[data-tone="mint"],
+  .badge-sheet-icon[data-tone="mint"] {
+    @apply bg-muted/40 text-foreground;
+  }
+  .badge-card-icon[data-tone="sky"],
+  .badge-sheet-icon[data-tone="sky"] {
+    @apply bg-muted/40 text-foreground;
+  }
+  .badge-card-icon[data-tone="rose"],
+  .badge-sheet-icon[data-tone="rose"] {
+    @apply bg-muted/40 text-foreground;
+  }
+  .badge-card-icon-glyph {
+    @apply text-2xl leading-none grayscale;
+  }
+  .badge-card-content {
+    @apply min-w-0 flex-1;
+  }
+  .badge-card-header {
+    @apply flex items-start justify-between gap-3;
+  }
+  .badge-card-title {
+    @apply text-[0.9375rem] font-semibold text-foreground;
+  }
+  .badge-card-meta {
+    @apply mt-1 text-[0.75rem] leading-relaxed text-foreground/70;
+  }
+  .badge-card-date {
+    @apply shrink-0 text-[0.75rem] font-medium text-foreground/55;
+  }
+  .badge-card-comment-preview {
+    @apply mt-3 text-[0.8125rem] leading-relaxed text-foreground/80;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .badge-sheet-hero {
+    @apply flex items-center gap-3;
+  }
+  .badge-sheet-icon {
+    @apply flex h-14 w-14 shrink-0 items-center justify-center rounded-md border border-border bg-muted/40 text-foreground;
+  }
+  .badge-sheet-icon-glyph {
+    @apply text-[1.75rem] leading-none grayscale;
+  }
+  .badge-sheet-subtitle {
+    @apply mt-1 text-[0.8125rem] text-muted;
+  }
+  .badge-sheet-comment {
+    @apply text-sm leading-relaxed text-foreground;
+  }
 }
