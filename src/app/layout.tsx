@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom"
+import { BottomNav } from "@/app/components/BottomNav"
 import { useActiveChild } from "@/shared/hooks/useActiveChild"
 import { useAppStore } from "@/store/rootStore"
 
@@ -47,6 +48,7 @@ export function AppLayout() {
         <main className="app-layout-main">
           <Outlet />
         </main>
+        <BottomNav />
       </div>
     </div>
   )

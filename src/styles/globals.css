@@ -162,7 +162,25 @@
     @apply border-b border-border;
   }
   .app-layout-main {
-    @apply flex-1 overflow-y-auto overscroll-y-contain px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))];
+    @apply flex-1 overflow-y-auto overscroll-y-contain px-4 py-4 pb-[calc(5.75rem+env(safe-area-inset-bottom))];
+  }
+  .bottom-nav {
+    @apply sticky bottom-0 z-50 border-t border-border bg-background/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur;
+  }
+  .bottom-nav-list {
+    @apply mx-auto grid max-w-[430px] grid-cols-5 items-center gap-1;
+  }
+  .bottom-nav-link {
+    @apply flex h-14 min-w-0 touch-manipulation flex-col items-center justify-center gap-1 rounded-md px-1 text-[0.6875rem] font-medium leading-none text-muted transition-colors active:bg-muted/70;
+  }
+  .bottom-nav-link[data-active="true"] {
+    @apply bg-muted/50 font-semibold text-foreground;
+  }
+  .bottom-nav-icon {
+    @apply size-5 shrink-0;
+  }
+  .bottom-nav-label {
+    @apply max-w-full truncate;
   }
 
   .page-title {
@@ -587,6 +605,363 @@
     @apply rounded-lg border border-dashed border-border bg-muted/30 px-3 py-4 text-[0.8125rem] text-muted;
   }
 
+  .connect-screen,
+  .chat-screen,
+  .group-info-screen,
+  .announcement-feed-screen,
+  .announcement-detail-screen {
+    @apply space-y-3;
+  }
+  .announcement-shortcut {
+    @apply flex w-full items-center gap-3 rounded-lg border border-border bg-card px-3 py-3 text-left transition-colors active:bg-muted/40;
+  }
+  .announcement-shortcut-icon {
+    @apply flex size-10 shrink-0 items-center justify-center rounded-md border border-border bg-muted/45 text-foreground;
+  }
+  .announcement-shortcut-copy {
+    @apply min-w-0 flex-1;
+  }
+  .announcement-shortcut-title-row {
+    @apply flex min-w-0 items-center justify-between gap-2;
+  }
+  .announcement-shortcut-title {
+    @apply truncate text-[0.9375rem] font-semibold text-foreground;
+  }
+  .announcement-shortcut-count {
+    @apply flex size-5 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-[0.6875rem] font-semibold text-white;
+  }
+  .announcement-shortcut-preview {
+    @apply mt-0.5 block truncate text-[0.8125rem] text-muted;
+  }
+  .connect-search {
+    @apply flex h-11 items-center gap-2 rounded-lg border border-border bg-card px-3;
+  }
+  .connect-search-icon {
+    @apply size-4 shrink-0 text-muted;
+  }
+  .connect-search-input {
+    @apply min-w-0 flex-1 bg-transparent text-[0.875rem] text-foreground outline-none placeholder:text-muted;
+  }
+  .connect-search-clear {
+    @apply flex size-7 shrink-0 items-center justify-center rounded-md text-muted transition-colors active:bg-muted/70;
+  }
+  .connect-search-clear-icon {
+    @apply size-4;
+  }
+  .connect-content-stack {
+    @apply space-y-5;
+  }
+  .connect-section {
+    @apply space-y-2;
+  }
+  .connect-section-title {
+    @apply text-[0.75rem] font-semibold uppercase tracking-wide text-muted;
+  }
+  .announcement-list,
+  .announcement-feed-list,
+  .chat-list {
+    @apply divide-y divide-border/60;
+  }
+  .announcement-card {
+    @apply block w-full py-3 text-left transition-colors active:bg-muted/35;
+  }
+  .announcement-card-topline,
+  .announcement-card-title-row,
+  .chat-list-title-row,
+  .chat-list-preview-row {
+    @apply flex min-w-0 items-center justify-between gap-3;
+  }
+  .announcement-card-topline {
+    @apply mb-1 text-[0.75rem] font-medium text-muted;
+  }
+  .announcement-type-label {
+    @apply inline-flex rounded-md border border-border bg-muted/45 px-2 py-0.5 text-[0.6875rem] font-semibold uppercase text-foreground/75;
+  }
+  .announcement-card-title {
+    @apply min-w-0 truncate text-[0.9375rem] font-semibold text-foreground;
+  }
+  .connect-unread-dot {
+    @apply size-2 shrink-0 rounded-full bg-emerald-600;
+  }
+  .announcement-card-group {
+    @apply mt-0.5 block truncate text-[0.75rem] font-medium text-foreground/70;
+  }
+  .announcement-card-preview {
+    @apply mt-1 block text-[0.8125rem] leading-relaxed text-muted;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .announcement-card-meta-row {
+    @apply mt-2 flex flex-wrap items-center gap-2;
+  }
+  .announcement-card-meta {
+    @apply inline-flex items-center gap-1 rounded-md border border-border bg-muted/35 px-2 py-1 text-[0.75rem] font-medium text-foreground/75;
+  }
+  .announcement-card-meta-icon {
+    @apply size-3.5 shrink-0;
+  }
+  .announcement-detail {
+    @apply space-y-3 rounded-lg border border-border bg-card p-4;
+  }
+  .announcement-detail-title {
+    @apply text-[1.125rem] font-semibold leading-snug text-foreground;
+  }
+  .announcement-detail-meta {
+    @apply text-[0.75rem] leading-relaxed text-muted;
+  }
+  .announcement-detail-body {
+    @apply whitespace-pre-wrap text-[0.875rem] leading-relaxed text-foreground;
+  }
+  .announcement-detail-callout {
+    @apply flex items-center gap-2 rounded-md border border-border bg-muted/35 px-3 py-2 text-[0.8125rem] font-medium text-foreground;
+  }
+  .chat-list-row {
+    @apply flex w-full items-center gap-3 py-3 text-left transition-colors active:bg-muted/35;
+  }
+  .connect-avatar {
+    @apply flex size-11 shrink-0 items-center justify-center rounded-lg border border-border bg-neutral-100 text-[0.8125rem] font-semibold text-foreground;
+  }
+  .connect-avatar-small {
+    @apply size-9 rounded-md text-[0.75rem];
+  }
+  .chat-list-body {
+    @apply min-w-0 flex-1;
+  }
+  .chat-list-title {
+    @apply min-w-0 truncate text-[0.9375rem] font-semibold text-foreground;
+  }
+  .chat-list-time {
+    @apply shrink-0 text-[0.75rem] text-muted;
+  }
+  .chat-list-preview {
+    @apply min-w-0 truncate text-[0.8125rem] text-muted;
+  }
+  .chat-list-unread {
+    @apply flex size-5 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-[0.6875rem] font-semibold text-white;
+  }
+  .connect-empty-state {
+    @apply flex min-h-56 flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/20 px-5 py-8 text-center;
+  }
+  .connect-empty-illustration {
+    @apply mb-4 flex h-14 w-20 items-end justify-center gap-1.5;
+  }
+  .connect-empty-illustration span {
+    @apply block w-4 rounded-t-md bg-neutral-200;
+  }
+  .connect-empty-illustration span:nth-child(1) {
+    @apply h-8;
+  }
+  .connect-empty-illustration span:nth-child(2) {
+    @apply h-12 bg-neutral-300;
+  }
+  .connect-empty-illustration span:nth-child(3) {
+    @apply h-6;
+  }
+  .connect-empty-title {
+    @apply text-[0.9375rem] font-semibold text-foreground;
+  }
+  .connect-empty-subtitle {
+    @apply mt-1 text-[0.8125rem] leading-relaxed text-muted;
+  }
+  .chat-header {
+    @apply sticky top-0 z-20 -mx-4 flex items-center gap-2 border-b border-border bg-background/95 px-4 py-2 backdrop-blur;
+  }
+  .chat-icon-button {
+    @apply flex size-9 shrink-0 items-center justify-center rounded-md text-foreground transition-colors active:bg-muted/70;
+  }
+  .chat-icon {
+    @apply size-4;
+  }
+  .chat-header-main {
+    @apply flex min-w-0 flex-1 items-center gap-2 text-left;
+  }
+  .chat-header-copy {
+    @apply min-w-0 flex-1;
+  }
+  .chat-header-title {
+    @apply block truncate text-[0.9375rem] font-semibold text-foreground;
+  }
+  .chat-header-subtitle {
+    @apply mt-0.5 block truncate text-[0.75rem] text-muted;
+  }
+  .message-list {
+    @apply space-y-2 pb-24 pt-1;
+  }
+  .message-row {
+    @apply flex justify-start;
+  }
+  .message-row-own {
+    @apply justify-end;
+  }
+  .message-bubble {
+    @apply max-w-[86%] rounded-lg border border-border bg-card px-3 py-2;
+  }
+  .message-bubble-own {
+    @apply border-emerald-200 bg-emerald-50;
+  }
+  .message-sender {
+    @apply mb-1 text-[0.75rem] font-semibold text-foreground;
+  }
+  .message-text {
+    @apply whitespace-pre-wrap text-[0.875rem] leading-relaxed text-foreground;
+  }
+  .message-quote {
+    @apply mb-2 border-l-2 border-foreground/40 bg-background/70 px-2 py-1;
+  }
+  .message-quote-author,
+  .reply-preview-author {
+    @apply block text-[0.75rem] font-semibold text-foreground;
+  }
+  .message-quote-text,
+  .reply-preview-text {
+    @apply block truncate text-[0.75rem] text-muted;
+  }
+  .message-actions-row {
+    @apply mt-2 flex items-center justify-end gap-2 text-[0.6875rem] text-muted;
+  }
+  .message-action {
+    @apply inline-flex items-center gap-1 font-medium text-foreground/70;
+  }
+  .message-action-icon {
+    @apply size-3;
+  }
+  .message-time {
+    @apply shrink-0;
+  }
+  .attachment-card {
+    @apply mt-2 flex min-h-14 items-center gap-2 rounded-md border border-border bg-background p-2;
+  }
+  .attachment-card[data-status="retry"] {
+    @apply border-red-300 bg-red-50;
+  }
+  .attachment-icon {
+    @apply size-5 shrink-0 text-foreground;
+  }
+  .attachment-copy {
+    @apply min-w-0 flex-1;
+  }
+  .attachment-name {
+    @apply block truncate text-[0.8125rem] font-semibold text-foreground;
+  }
+  .attachment-meta {
+    @apply mt-0.5 block text-[0.6875rem] font-medium text-muted;
+  }
+  .attachment-download {
+    @apply flex size-8 shrink-0 items-center justify-center rounded-md border border-border text-foreground transition-colors active:bg-muted/70;
+  }
+  .attachment-download-icon {
+    @apply size-4;
+  }
+  .media-card,
+  .structured-message-card,
+  .voice-note {
+    @apply flex items-center gap-2 rounded-md border border-border bg-background p-2 text-[0.8125rem] text-foreground;
+  }
+  .media-card {
+    @apply min-h-28 flex-col justify-center text-center;
+  }
+  .media-card-icon {
+    @apply size-8 text-muted;
+  }
+  .media-play-icon {
+    @apply size-5;
+  }
+  .structured-message-card {
+    @apply flex-col items-start;
+  }
+  .structured-message-title {
+    @apply text-[0.8125rem] font-semibold text-foreground;
+  }
+  .structured-message-copy {
+    @apply text-[0.8125rem] leading-relaxed text-muted;
+  }
+  .structured-message-meta {
+    @apply text-[0.75rem] font-medium text-foreground;
+  }
+  .voice-note-icon {
+    @apply size-4 shrink-0 text-foreground;
+  }
+  .voice-waveform {
+    @apply flex h-7 min-w-0 flex-1 items-center gap-0.5;
+  }
+  .voice-waveform span {
+    @apply w-0.5 rounded-full bg-foreground/45;
+  }
+  .voice-note-time {
+    @apply text-[0.75rem] text-muted;
+  }
+  .chat-composer {
+    @apply sticky bottom-0 z-20 -mx-4 border-t border-border bg-background/95 px-4 pb-2 pt-2 backdrop-blur;
+  }
+  .reply-preview {
+    @apply mb-2 flex items-center gap-2 rounded-md border border-border bg-muted/40 px-2 py-1.5;
+  }
+  .reply-preview-copy {
+    @apply min-w-0 flex-1;
+  }
+  .reply-preview-close {
+    @apply flex size-7 shrink-0 items-center justify-center rounded-md text-muted active:bg-muted/70;
+  }
+  .composer-row {
+    @apply flex items-end gap-2;
+  }
+  .composer-attach,
+  .composer-send {
+    @apply flex size-10 shrink-0 items-center justify-center rounded-md border border-border bg-card text-foreground transition-colors active:bg-muted/70;
+  }
+  .composer-send {
+    @apply bg-foreground text-background disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground;
+  }
+  .composer-file-input {
+    @apply hidden;
+  }
+  .composer-input {
+    @apply max-h-28 min-h-10 min-w-0 flex-1 resize-none rounded-md border border-border bg-card px-3 py-2 text-[0.875rem] leading-relaxed text-foreground outline-none placeholder:text-muted;
+  }
+  .group-info-hero {
+    @apply flex flex-col items-center border-b border-border pb-5 pt-2 text-center;
+  }
+  .group-info-avatar {
+    @apply size-20 rounded-xl text-lg;
+  }
+  .group-info-title {
+    @apply mt-3 text-[1.0625rem] font-semibold text-foreground;
+  }
+  .group-info-description {
+    @apply mt-1 max-w-sm text-[0.8125rem] leading-relaxed text-muted;
+  }
+  .group-info-section {
+    @apply space-y-2 border-b border-border/60 pb-4;
+  }
+  .member-list,
+  .shared-files-list {
+    @apply space-y-2;
+  }
+  .member-row {
+    @apply flex min-h-12 items-center gap-3;
+  }
+  .member-avatar {
+    @apply size-10 shrink-0 rounded-md object-cover ring-1 ring-border;
+  }
+  .member-avatar-fallback {
+    @apply flex items-center justify-center bg-muted;
+  }
+  .member-avatar-icon {
+    @apply size-4 text-muted;
+  }
+  .member-copy {
+    @apply min-w-0 flex-1;
+  }
+  .member-name {
+    @apply block truncate text-[0.875rem] font-medium text-foreground;
+  }
+  .member-meta,
+  .group-info-empty {
+    @apply text-[0.75rem] text-muted;
+  }
+
   .sheet-root {
     @apply fixed inset-0 z-[1000];
   }
@@ -652,6 +1027,21 @@
     @apply mb-2 text-[0.9375rem] font-semibold text-foreground;
   }
   .screen-card-copy {
+    @apply text-[0.8125rem] leading-relaxed text-muted;
+  }
+  .coming-soon-screen {
+    @apply min-h-[calc(100dvh-12rem)];
+  }
+  .coming-soon-panel {
+    @apply flex min-h-56 flex-col justify-center rounded-lg border border-dashed border-border bg-muted/30 px-4 py-8 text-left;
+  }
+  .coming-soon-kicker {
+    @apply mb-2 text-[0.75rem] font-semibold uppercase tracking-wide text-muted;
+  }
+  .coming-soon-title {
+    @apply mb-2 text-[1.125rem] font-semibold leading-snug text-foreground;
+  }
+  .coming-soon-copy {
     @apply text-[0.8125rem] leading-relaxed text-muted;
   }
   .ui-button {
