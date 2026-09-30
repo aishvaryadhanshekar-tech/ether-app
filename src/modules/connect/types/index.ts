@@ -47,10 +47,26 @@ export interface Message {
   eventMeta?: string
 }
 
+export type AnnouncementKind = "announcement" | "kudos" | "circular" | "event"
+
+export type AnnouncementScope = "school" | "class"
+
+export type AnnouncementTypeFilter = "all" | AnnouncementKind
+
+export type AnnouncementScopeFilter = "all" | AnnouncementScope
+
+export interface AnnouncementKudos {
+  awardTitle: string
+  awardIcon: string
+  awardedTo: string
+  comment?: string
+}
+
 export interface Announcement {
   id: string
   conversationId: string
-  kind: "announcement" | "circular" | "event"
+  kind: AnnouncementKind
+  scope: AnnouncementScope
   title: string
   author: string
   groupName: string
@@ -60,8 +76,21 @@ export interface Announcement {
   attachment?: Attachment
   eventDate?: string
   eventMeta?: string
+  kudos?: AnnouncementKudos
   pinned?: boolean
   unread?: boolean
+}
+
+export const announcementKindLabels: Record<AnnouncementKind, string> = {
+  announcement: "Announcement",
+  kudos: "Kudos",
+  circular: "Circular",
+  event: "Event",
+}
+
+export const announcementScopeLabels: Record<AnnouncementScope, string> = {
+  school: "School-wide",
+  class: "Class",
 }
 
 export interface Conversation {

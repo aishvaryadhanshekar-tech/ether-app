@@ -23,3 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# Local Vercel CLI temp data
+.vercel-temp
+$PWD

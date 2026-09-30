@@ -158,6 +158,39 @@
   .app-layout-profile-photo {
     @apply h-10 w-10 shrink-0 rounded-md object-cover ring-1 ring-border;
   }
+  .app-layout-profile-switch {
+    @apply -mr-1 min-w-0 rounded-lg p-1 text-left transition-colors outline-none hover:bg-secondary active:bg-secondary focus-visible:ring-2 focus-visible:ring-ring disabled:hover:bg-transparent;
+  }
+  .app-layout-profile-anchor {
+    @apply relative min-w-0;
+  }
+  .app-layout-profile-chevron {
+    @apply size-4 shrink-0 text-muted-foreground transition-transform duration-200;
+  }
+  .app-layout-profile-chevron[data-open="true"] {
+    @apply rotate-180;
+  }
+  .child-switcher-menu {
+    @apply absolute right-0 top-full z-50 mt-2 w-60 rounded-lg border border-border bg-card p-1 shadow-md animate-in fade-in-0 zoom-in-95 slide-in-from-top-1 duration-150;
+  }
+  .child-switcher-item {
+    @apply flex w-full items-center gap-3 rounded-md p-2 text-left transition-colors outline-none hover:bg-secondary focus-visible:bg-secondary;
+  }
+  .child-switcher-item-photo {
+    @apply size-8 shrink-0 rounded-md object-cover ring-1 ring-border;
+  }
+  .child-switcher-item-info {
+    @apply flex min-w-0 flex-1 flex-col leading-tight;
+  }
+  .child-switcher-item-name {
+    @apply truncate text-sm font-semibold text-foreground;
+  }
+  .child-switcher-item-grade {
+    @apply mt-0.5 truncate text-xs text-muted-foreground;
+  }
+  .child-switcher-item-check {
+    @apply size-4 shrink-0 text-foreground;
+  }
   .app-layout-divider {
     @apply border-b border-border;
   }
@@ -607,31 +640,20 @@
 
   .connect-screen,
   .chat-screen,
-  .group-info-screen,
-  .announcement-feed-screen,
-  .announcement-detail-screen {
+  .group-info-screen {
     @apply space-y-3;
   }
-  .announcement-shortcut {
-    @apply flex w-full items-center gap-3 rounded-lg border border-border bg-card px-3 py-3 text-left transition-colors active:bg-muted/40;
+  .connect-section-tabs {
+    @apply mb-1 grid grid-cols-2 border-b border-border;
   }
-  .announcement-shortcut-icon {
-    @apply flex size-10 shrink-0 items-center justify-center rounded-md border border-border bg-muted/45 text-foreground;
+  .connect-section-tab {
+    @apply relative inline-flex h-10 items-center justify-center gap-1.5 border-b-2 border-transparent pb-2 text-[0.875rem] font-medium text-muted transition-colors;
   }
-  .announcement-shortcut-copy {
-    @apply min-w-0 flex-1;
+  .connect-section-tab[data-active="true"] {
+    @apply border-foreground font-semibold text-foreground;
   }
-  .announcement-shortcut-title-row {
-    @apply flex min-w-0 items-center justify-between gap-2;
-  }
-  .announcement-shortcut-title {
-    @apply truncate text-[0.9375rem] font-semibold text-foreground;
-  }
-  .announcement-shortcut-count {
-    @apply flex size-5 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-[0.6875rem] font-semibold text-white;
-  }
-  .announcement-shortcut-preview {
-    @apply mt-0.5 block truncate text-[0.8125rem] text-muted;
+  .connect-section-tab-label {
+    @apply leading-none;
   }
   .connect-search {
     @apply flex h-11 items-center gap-2 rounded-lg border border-border bg-card px-3;
@@ -657,65 +679,147 @@
   .connect-section-title {
     @apply text-[0.75rem] font-semibold uppercase tracking-wide text-muted;
   }
-  .announcement-list,
-  .announcement-feed-list,
   .chat-list {
     @apply divide-y divide-border/60;
   }
-  .announcement-card {
-    @apply block w-full py-3 text-left transition-colors active:bg-muted/35;
-  }
-  .announcement-card-topline,
-  .announcement-card-title-row,
   .chat-list-title-row,
   .chat-list-preview-row {
     @apply flex min-w-0 items-center justify-between gap-3;
   }
-  .announcement-card-topline {
-    @apply mb-1 text-[0.75rem] font-medium text-muted;
-  }
   .announcement-type-label {
-    @apply inline-flex rounded-md border border-border bg-muted/45 px-2 py-0.5 text-[0.6875rem] font-semibold uppercase text-foreground/75;
+    @apply inline-flex rounded-md border px-2 py-0.5 text-[0.6875rem] font-semibold uppercase;
   }
-  .announcement-card-title {
-    @apply min-w-0 truncate text-[0.9375rem] font-semibold text-foreground;
+  .announcement-type-label[data-kind="announcement"] {
+    @apply border-emerald-200 bg-emerald-50 text-emerald-800;
+  }
+  .announcement-type-label[data-kind="kudos"] {
+    @apply border-amber-200 bg-amber-50 text-amber-800;
+  }
+  .announcement-type-label[data-kind="circular"] {
+    @apply border-sky-200 bg-sky-50 text-sky-800;
+  }
+  .announcement-type-label[data-kind="event"] {
+    @apply border-violet-200 bg-violet-50 text-violet-800;
+  }
+  .announcement-filters {
+    @apply space-y-3;
+  }
+  .announcement-filter-chips {
+    @apply flex flex-wrap gap-2;
+  }
+  .filter-dropdown-chip {
+    @apply relative;
+  }
+  .filter-dropdown-chip-trigger {
+    @apply inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-card px-3 text-[0.8125rem] font-medium text-foreground transition-colors active:bg-muted/30;
+  }
+  .filter-dropdown-chip-trigger[data-open="true"] {
+    @apply border-foreground/25 bg-card;
+  }
+  .filter-dropdown-chip-icon {
+    @apply flex size-4 shrink-0 items-center justify-center [&>svg]:size-3.5;
+  }
+  .filter-dropdown-chip-label {
+    @apply leading-none;
+  }
+  .filter-dropdown-chip-chevron {
+    @apply size-3.5 shrink-0 text-muted;
+  }
+  .filter-dropdown-chip-menu {
+    @apply absolute left-0 top-[calc(100%+0.375rem)] z-20 min-w-[11.5rem] overflow-hidden rounded-xl border border-border bg-card py-1 shadow-md;
+  }
+  .filter-dropdown-chip-option {
+    @apply flex w-full items-center gap-2 px-3 py-2.5 text-left text-[0.875rem] text-foreground transition-colors active:bg-muted/50;
+  }
+  .filter-dropdown-chip-option[data-selected="true"] {
+    @apply font-medium;
+  }
+  .filter-dropdown-chip-option-icon {
+    @apply flex size-4 shrink-0 items-center justify-center text-muted [&>svg]:size-3.5;
+  }
+  .filter-dropdown-chip-option-label {
+    @apply min-w-0 flex-1;
+  }
+  .filter-dropdown-chip-check {
+    @apply size-4 shrink-0 text-foreground;
+  }
+  .announcement-kudos {
+    @apply space-y-2;
+  }
+  .announcement-kudos-award {
+    @apply flex items-center gap-2.5;
+  }
+  .announcement-kudos-icon {
+    @apply flex size-10 shrink-0 items-center justify-center rounded-full border border-amber-200 bg-amber-50 text-xl;
+  }
+  .announcement-kudos-recipient {
+    @apply text-[0.875rem] font-medium text-foreground;
+  }
+  .announcement-kudos-comment {
+    @apply text-[0.875rem] italic leading-relaxed text-muted;
   }
   .connect-unread-dot {
     @apply size-2 shrink-0 rounded-full bg-emerald-600;
   }
-  .announcement-card-group {
-    @apply mt-0.5 block truncate text-[0.75rem] font-medium text-foreground/70;
+  .announcement-feed {
+    @apply space-y-3;
   }
-  .announcement-card-preview {
-    @apply mt-1 block text-[0.8125rem] leading-relaxed text-muted;
+  .announcement-post {
+    @apply space-y-2 rounded-xl border border-border bg-card p-4;
+  }
+  .announcement-post-header {
+    @apply flex items-start gap-3;
+  }
+  .announcement-post-header-copy {
+    @apply min-w-0 flex-1;
+  }
+  .announcement-post-author-row {
+    @apply flex min-w-0 items-center justify-between gap-2;
+  }
+  .announcement-post-author {
+    @apply truncate text-[0.875rem] font-semibold text-foreground;
+  }
+  .announcement-post-time {
+    @apply shrink-0 text-[0.75rem] text-muted;
+  }
+  .announcement-post-group {
+    @apply mt-0.5 block truncate text-[0.75rem] text-muted;
+  }
+  .announcement-post-title {
+    @apply text-[0.9375rem] font-semibold leading-snug text-foreground;
+  }
+  .announcement-post-body {
+    @apply whitespace-pre-wrap text-[0.875rem] leading-relaxed text-foreground;
+  }
+  .announcement-post-body-clamped {
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  .announcement-card-meta-row {
-    @apply mt-2 flex flex-wrap items-center gap-2;
+  .announcement-post-see-more {
+    @apply mt-1 text-[0.8125rem] font-medium text-muted transition-colors active:text-foreground;
   }
-  .announcement-card-meta {
-    @apply inline-flex items-center gap-1 rounded-md border border-border bg-muted/35 px-2 py-1 text-[0.75rem] font-medium text-foreground/75;
+  .announcement-post-footer {
+    @apply flex flex-wrap items-center gap-2 pt-1;
   }
-  .announcement-card-meta-icon {
+  .announcement-post-meta {
+    @apply inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[0.75rem] font-medium;
+  }
+  .announcement-post-meta[data-kind="announcement"] {
+    @apply border-emerald-200 bg-emerald-50 text-emerald-800;
+  }
+  .announcement-post-meta[data-kind="kudos"] {
+    @apply border-amber-200 bg-amber-50 text-amber-800;
+  }
+  .announcement-post-meta[data-kind="circular"] {
+    @apply border-sky-200 bg-sky-50 text-sky-800;
+  }
+  .announcement-post-meta[data-kind="event"] {
+    @apply border-violet-200 bg-violet-50 text-violet-800;
+  }
+  .announcement-post-meta-icon {
     @apply size-3.5 shrink-0;
-  }
-  .announcement-detail {
-    @apply space-y-3 rounded-lg border border-border bg-card p-4;
-  }
-  .announcement-detail-title {
-    @apply text-[1.125rem] font-semibold leading-snug text-foreground;
-  }
-  .announcement-detail-meta {
-    @apply text-[0.75rem] leading-relaxed text-muted;
-  }
-  .announcement-detail-body {
-    @apply whitespace-pre-wrap text-[0.875rem] leading-relaxed text-foreground;
-  }
-  .announcement-detail-callout {
-    @apply flex items-center gap-2 rounded-md border border-border bg-muted/35 px-3 py-2 text-[0.8125rem] font-medium text-foreground;
   }
   .chat-list-row {
     @apply flex w-full items-center gap-3 py-3 text-left transition-colors active:bg-muted/35;
@@ -983,6 +1087,19 @@
   .sheet-content-bottom {
     @apply inset-x-0 bottom-0 max-h-[90dvh] overflow-y-auto rounded-t-lg border-t border-border px-4 pt-5 pb-[calc(1.75rem+env(safe-area-inset-bottom))];
   }
+  .sheet-content.fees-payment-sheet,
+  .sheet-content.fees-payment-success-sheet,
+  .sheet-content.fees-details-sheet,
+  .sheet-content.fees-pdf-sheet,
+  .sheet-content.fees-filter-sheet {
+    @apply bg-white;
+  }
+  .sheet-content.fees-payment-sheet {
+    @apply flex flex-col overflow-hidden pb-0;
+  }
+  .sheet-content.rollover-leave-sheet {
+    @apply rounded-t-2xl bg-white px-5 pt-3 pb-[calc(1.5rem+env(safe-area-inset-bottom))];
+  }
   .attendance-sheet-grabber {
     @apply mx-auto mb-4 h-1.5 w-12 rounded-full bg-muted;
   }
@@ -1043,6 +1160,672 @@
   }
   .coming-soon-copy {
     @apply text-[0.8125rem] leading-relaxed text-muted;
+  }
+
+  .fees-screen {
+    @apply space-y-4 pb-6;
+  }
+
+  .rollover-intro-card {
+    @apply flex min-h-[24rem] flex-col items-center rounded-2xl border border-border bg-white px-6 pb-5 pt-5 text-center text-foreground shadow-sm;
+  }
+  .rollover-intro-art {
+    @apply mx-auto mb-4 block h-[8.5rem] w-[13.5rem] text-foreground;
+  }
+  .rollover-intro-title {
+    @apply mx-auto max-w-[16.5rem] text-[1.25rem] font-semibold leading-snug text-foreground;
+  }
+  .rollover-intro-copy {
+    @apply mx-auto mt-2.5 max-w-[20.5rem] text-[0.875rem] leading-relaxed text-muted;
+  }
+  .rollover-intro-cta {
+    @apply mt-auto inline-flex h-11 w-full items-center justify-center rounded-full bg-foreground px-4 text-sm font-semibold text-background active:scale-[0.99];
+  }
+  .enrolment-submitted-card {
+    @apply flex w-full items-center gap-3 rounded-2xl border border-border bg-white px-4 py-3.5 text-left shadow-sm active:scale-[0.99];
+  }
+  .enrolment-submitted-icon {
+    @apply inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700;
+  }
+  .enrolment-submitted-copy {
+    @apply flex min-w-0 flex-1 flex-col gap-0.5;
+  }
+  .enrolment-submitted-title {
+    @apply text-[0.9375rem] font-semibold text-foreground;
+  }
+  .enrolment-submitted-subtitle {
+    @apply text-[0.75rem] leading-snug text-muted;
+  }
+  .enrolment-submitted-chevron {
+    @apply size-5 shrink-0 text-muted;
+  }
+
+  .rollover-sheet {
+    @apply h-dvh max-h-dvh overflow-hidden bg-background;
+  }
+  .rollover-sheet-header {
+    @apply shrink-0 border-b border-border px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))];
+  }
+  .rollover-sheet-header-row {
+    @apply relative flex min-h-9 items-center justify-center;
+  }
+  .rollover-sheet-kicker {
+    @apply text-[1rem] font-semibold text-foreground;
+  }
+  .rollover-sheet-main {
+    @apply min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-4 py-4;
+  }
+  .rollover-sheet-footer {
+    @apply flex shrink-0 items-center gap-3 border-t border-border bg-background px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))];
+  }
+  .rollover-later-btn {
+    @apply inline-flex h-11 flex-1 items-center justify-center rounded-full border border-border bg-white px-3 text-sm font-semibold text-foreground;
+  }
+  .rollover-leave-header {
+    @apply px-1;
+  }
+  .rollover-leave-title {
+    @apply text-[1.125rem] font-semibold tracking-tight text-foreground;
+  }
+  .rollover-leave-copy {
+    @apply mt-1.5 text-[0.875rem] leading-relaxed text-muted;
+  }
+  .rollover-leave-actions {
+    @apply mt-6 flex flex-col gap-2.5;
+  }
+  .rollover-leave-dismiss {
+    @apply inline-flex h-11 w-full items-center justify-center rounded-full px-3 text-sm font-semibold text-muted active:bg-muted/40;
+  }
+  .rollover-stepper {
+    @apply flex items-start justify-center gap-2 px-1;
+  }
+  .rollover-step {
+    @apply flex min-w-0 flex-1 flex-col items-center gap-1.5 border-0 bg-transparent p-0 text-center;
+  }
+  .rollover-step-index {
+    @apply flex size-7 items-center justify-center rounded-full border-2 border-border text-[0.75rem] font-semibold text-muted;
+  }
+  .rollover-step[data-active="true"] .rollover-step-index {
+    @apply border-foreground bg-foreground text-background;
+  }
+  .rollover-step[data-complete="true"] .rollover-step-index {
+    @apply border-foreground bg-foreground text-background;
+  }
+  .rollover-step-check {
+    @apply size-3.5;
+  }
+  .rollover-step-label {
+    @apply text-[0.75rem] font-medium text-muted;
+  }
+  .rollover-step[data-active="true"] .rollover-step-label {
+    @apply font-semibold text-foreground;
+  }
+  .rollover-step[data-complete="true"] .rollover-step-label {
+    @apply text-foreground;
+  }
+  .rollover-step-connector {
+    @apply mt-[0.8125rem] h-0.5 w-8 shrink-0 rounded-full bg-border;
+  }
+  .rollover-step-connector[data-complete="true"] {
+    @apply bg-foreground;
+  }
+  .rollover-step:disabled {
+    @apply cursor-default;
+  }
+
+  .rollover-screen {
+    @apply space-y-4 pb-4;
+  }
+  .rollover-hub-intro {
+    @apply mb-5 space-y-1.5;
+  }
+  .rollover-hub-title {
+    @apply text-[1.5rem] font-semibold tracking-tight text-foreground;
+  }
+  .rollover-hub-copy {
+    @apply text-[0.875rem] leading-relaxed text-muted;
+  }
+  .rollover-hub-list {
+    @apply grid gap-3;
+    grid-auto-rows: 1fr;
+  }
+  .rollover-hub-card {
+    @apply flex h-full w-full items-center gap-3 rounded-2xl border border-border bg-white px-3.5 py-3.5 text-left active:border-foreground/20 active:bg-muted/40;
+  }
+  .rollover-hub-icon {
+    @apply flex size-12 shrink-0 items-center justify-center rounded-xl border border-border bg-white text-foreground;
+  }
+  .rollover-hub-card-copy {
+    @apply flex min-w-0 flex-1 flex-col justify-center gap-0.5;
+  }
+  .rollover-hub-card-title-row {
+    @apply flex w-full flex-wrap items-center gap-x-2 gap-y-1;
+  }
+  .rollover-hub-card-title {
+    @apply block w-full text-[0.9375rem] font-semibold text-foreground;
+  }
+  .rollover-hub-card-title-row .rollover-hub-card-title {
+    @apply w-auto;
+  }
+  .rollover-hub-card-sub {
+    @apply block w-full text-[0.8125rem] leading-snug text-muted;
+  }
+  .rollover-hub-complete {
+    @apply inline-flex items-center gap-1 text-[0.75rem] font-semibold text-emerald-700;
+  }
+  .rollover-hub-chevron {
+    @apply size-5 shrink-0 text-muted;
+  }
+  .rollover-subheader {
+    @apply relative mb-1 flex min-h-11 items-center justify-center border-b border-border pb-3;
+  }
+  .rollover-back {
+    @apply absolute left-0 inline-flex size-9 items-center justify-center rounded-full text-foreground hover:bg-muted/60;
+  }
+  .rollover-back svg {
+    @apply size-5;
+  }
+  .rollover-subheader-title {
+    @apply max-w-[70%] text-center text-[1rem] font-semibold leading-snug text-foreground;
+  }
+  .rollover-hint {
+    @apply mt-2 text-center text-[0.75rem] leading-snug text-muted;
+  }
+  .rollover-stack {
+    @apply space-y-3;
+  }
+  .rollover-accordion {
+    @apply overflow-hidden rounded-2xl border border-border bg-white shadow-sm;
+  }
+  .rollover-accordion[data-open="true"] {
+    @apply border-foreground/20;
+  }
+  .rollover-accordion-trigger {
+    @apply flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left;
+  }
+  .rollover-accordion-copy {
+    @apply flex min-w-0 flex-col;
+  }
+  .rollover-accordion-title {
+    @apply text-[0.9375rem] font-semibold text-foreground;
+  }
+  .rollover-accordion-subtitle {
+    @apply text-[0.75rem] text-muted;
+  }
+  .rollover-accordion-chevron {
+    @apply size-5 shrink-0 text-muted transition-transform;
+  }
+  .rollover-accordion-chevron[data-open="true"] {
+    transform: rotate(180deg);
+  }
+  .rollover-accordion-body {
+    @apply border-t border-border px-4 py-4;
+  }
+  .rollover-form-grid {
+    @apply space-y-3.5;
+  }
+  .rollover-child-form-grid {
+    @apply space-y-5;
+  }
+  .rollover-child-photo {
+    @apply flex flex-col items-center gap-3 pb-1;
+  }
+  .rollover-child-photo-img,
+  .rollover-child-photo-placeholder {
+    @apply size-24 rounded-2xl object-cover;
+  }
+  .rollover-child-photo-placeholder {
+    @apply bg-muted;
+  }
+  .rollover-child-photo-upload {
+    @apply relative inline-flex h-10 cursor-pointer items-center gap-2 rounded-full border border-border bg-white px-3.5 text-[0.8125rem] font-semibold text-foreground;
+  }
+  .rollover-file-input {
+    @apply absolute inset-0 cursor-pointer opacity-0;
+  }
+  .rollover-field {
+    @apply block space-y-1.5;
+  }
+  .rollover-field-label {
+    @apply text-[0.8125rem] font-medium text-foreground;
+  }
+  .rollover-field-required {
+    @apply ml-0.5 text-red-600;
+  }
+  .rollover-field-input {
+    @apply w-full rounded-xl border border-border bg-white px-3 py-2.5 text-[0.875rem] text-foreground outline-none transition-colors placeholder:text-muted focus:border-foreground focus:ring-2 focus:ring-foreground/10 disabled:bg-muted/40 disabled:text-foreground;
+  }
+  .rollover-field-select {
+    @apply appearance-none bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat pr-9;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  }
+  .rollover-yes-no {
+    @apply flex gap-2;
+  }
+  .rollover-yes-no-btn {
+    @apply inline-flex h-10 min-w-[4.5rem] items-center justify-center rounded-full border border-border bg-white px-4 text-sm font-medium text-muted disabled:opacity-100;
+  }
+  .rollover-yes-no-btn[data-selected="true"] {
+    @apply border-foreground bg-foreground text-background;
+  }
+  .rollover-footer {
+    @apply sticky bottom-0 z-10 -mx-4 border-t border-border bg-background/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur;
+  }
+  .rollover-primary-btn {
+    @apply inline-flex h-11 w-full flex-1 items-center justify-center rounded-full bg-foreground px-3 text-sm font-semibold text-background active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-600 disabled:active:scale-100;
+  }
+  .rollover-outline-btn {
+    @apply inline-flex h-11 flex-1 items-center justify-center rounded-full border border-border bg-white px-4 text-sm font-semibold text-foreground;
+  }
+  .rollover-declarations-card {
+    @apply space-y-3 rounded-2xl border border-border bg-white p-4 shadow-sm;
+  }
+  .rollover-hub-list + .rollover-declarations-card {
+    @apply mt-5;
+  }
+  .rollover-declarations-title {
+    @apply flex flex-wrap items-center gap-2 text-[1rem] font-semibold text-foreground;
+  }
+  .rollover-required-badge {
+    @apply inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-[0.6875rem] font-semibold uppercase tracking-wide text-amber-800;
+  }
+  .rollover-declarations-copy,
+  .rollover-declarations-fineprint {
+    @apply text-[0.8125rem] leading-relaxed text-muted;
+  }
+  .rollover-doc-list {
+    @apply space-y-2;
+  }
+  .rollover-doc-row {
+    @apply flex items-center gap-2.5 rounded-xl border border-border bg-muted/20 px-3 py-2.5;
+  }
+  .rollover-doc-row[data-agreed="true"] {
+    @apply border-emerald-200 bg-emerald-50/60;
+  }
+  .rollover-doc-open {
+    @apply flex min-w-0 flex-1 items-center gap-2 no-underline;
+  }
+  .rollover-doc-link-text {
+    @apply min-w-0 flex-1 text-[0.8125rem] font-medium text-foreground no-underline;
+  }
+  .rollover-doc-chevron {
+    @apply size-4 shrink-0 text-muted;
+  }
+  .rollover-doc-status {
+    @apply inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[0.6875rem] font-semibold text-emerald-800;
+  }
+  .rollover-esign {
+    @apply flex flex-col gap-1.5;
+  }
+  .rollover-esign-label {
+    @apply text-[0.8125rem] font-medium text-foreground;
+  }
+  .rollover-doc-article {
+    @apply space-y-3 rounded-2xl border border-border bg-white p-4 shadow-sm;
+  }
+  .rollover-doc-heading {
+    @apply text-[0.9375rem] font-semibold text-foreground;
+  }
+  .rollover-doc-paragraph {
+    @apply text-[0.8125rem] leading-relaxed text-muted;
+  }
+  .rollover-doc-scroll-hint {
+    @apply text-left text-[0.75rem] font-medium text-muted;
+  }
+  .rollover-doc-end {
+    @apply -mt-4 h-0;
+  }
+  .rollover-doc-consent {
+    @apply flex items-start gap-2.5 rounded-xl border border-border bg-muted/20 px-3 py-3 text-[0.8125rem] leading-relaxed text-foreground;
+  }
+  .rollover-doc-consent[data-enabled="false"] {
+    @apply opacity-60;
+  }
+  .rollover-doc-consent input[type="checkbox"] {
+    @apply mt-0.5 size-[1.125rem] shrink-0 accent-emerald-600;
+  }
+  .rollover-doc-consent input[type="checkbox"]:disabled {
+    @apply cursor-not-allowed;
+  }
+  .rollover-doc-actions {
+    @apply flex w-full gap-3;
+  }
+  .rollover-doc-agree {
+    @apply flex-1;
+  }
+
+  .fees-loading {
+    @apply text-[0.8125rem] text-muted;
+  }
+  .fees-card-carousel-wrap {
+    @apply space-y-3;
+  }
+  .fees-card-carousel {
+    @apply -mx-4 flex gap-3 overflow-x-auto px-4 pb-1 pt-1 scroll-pl-4 snap-x snap-mandatory touch-pan-x [scrollbar-width:none] [-webkit-overflow-scrolling:touch];
+  }
+  .fees-card-carousel::-webkit-scrollbar {
+    display: none;
+  }
+  .fees-card-slide {
+    @apply flex min-w-[min(88vw,400px)] snap-start shrink-0;
+  }
+  .fees-summary-card {
+    @apply flex h-full w-full flex-col rounded-2xl border border-border bg-white p-4 text-foreground;
+  }
+  .fees-summary-header {
+    @apply flex flex-wrap items-start justify-between gap-x-3 gap-y-2;
+  }
+  .fees-summary-period {
+    @apply text-[0.875rem] font-semibold leading-snug text-[#334155];
+  }
+  .fees-status-pill {
+    @apply inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[0.6875rem] font-semibold;
+  }
+  .fees-status-pill svg {
+    @apply size-3;
+  }
+  .fees-status-pill[data-state="due"] {
+    @apply bg-[#f5e6d8] text-[#8b5e34];
+  }
+  .fees-status-pill[data-state="pending"] {
+    @apply bg-[#f5e6d8] text-[#8b5e34];
+  }
+  .fees-status-pill[data-state="upcoming"] {
+    @apply bg-[#e8edf8] text-[#4b5f8c];
+  }
+  .fees-status-pill[data-state="paid"] {
+    @apply border border-green-200 bg-green-50 text-green-800;
+  }
+  .fees-summary-main {
+    @apply mt-5;
+  }
+  .fees-summary-kicker {
+    @apply text-[0.6875rem] font-semibold uppercase tracking-[0.06em] text-muted;
+  }
+  .fees-summary-amount {
+    @apply text-[2.5rem] font-semibold leading-none tracking-tight text-foreground;
+  }
+  .fees-summary-amount-block {
+    @apply min-w-0;
+  }
+  .fees-paid-content {
+    @apply mt-7 rounded-lg border border-green-200 bg-green-50/70 p-4;
+  }
+  .fees-paid-content .fees-summary-kicker {
+    @apply text-green-800/70;
+  }
+  .fees-paid-content .fees-summary-amount {
+    @apply text-green-900;
+  }
+  .fees-paid-copy {
+    @apply mt-3 text-[0.8125rem] leading-relaxed text-green-800;
+  }
+  .fees-summary-card[data-state="paid"] {
+    @apply border-green-200/80;
+  }
+  .fees-summary-meta {
+    @apply mt-5 border-y border-border py-3;
+  }
+  .fees-summary-meta div {
+    @apply min-w-0;
+  }
+  .fees-summary-meta span {
+    @apply block text-[0.6875rem] font-medium uppercase tracking-wide text-muted;
+  }
+  .fees-summary-meta strong {
+    @apply mt-1 flex items-center gap-1.5 text-[0.8125rem] font-medium;
+  }
+  .fees-summary-meta svg {
+    @apply size-3.5 shrink-0;
+  }
+  .fees-summary-outstanding {
+    @apply mt-5 flex w-full flex-col gap-2 p-0 text-left text-foreground;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    pointer-events: none;
+  }
+  .fees-summary-outstanding-top {
+    @apply flex items-center justify-between gap-2;
+  }
+  .fees-summary-outstanding-bottom {
+    @apply flex items-center justify-between gap-3;
+  }
+  .fees-summary-trailing {
+    @apply flex shrink-0 items-center;
+  }
+  .fees-summary-right-trigger {
+    @apply inline-flex items-center justify-center rounded-full p-2 text-muted transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-foreground/30;
+  }
+  .fees-summary-avatar-group {
+    @apply flex items-center;
+  }
+  .fees-summary-avatar {
+    @apply relative flex h-8 w-8 items-center justify-center rounded-full border border-white text-[0.75rem] font-semibold shadow-sm;
+  }
+  .fees-summary-avatar[data-child="child_1"] {
+    @apply bg-[#d9c6a6] text-[#2c2c2c];
+    margin-right: -0.35rem;
+    z-index: 10;
+  }
+  .fees-summary-avatar[data-child="child_2"] {
+    @apply bg-[#d0e4ff] text-[#1d4ed8];
+    margin-left: -0.35rem;
+    z-index: 5;
+  }
+  .fees-summary-avatar[data-child]:not([data-child="child_1"]):not([data-child="child_2"]) {
+    @apply bg-slate-300 text-foreground;
+    z-index: 1;
+  }
+  .fees-summary-right-icon {
+    @apply size-4 text-muted;
+    margin-left: 0.75rem;
+  }
+  .fees-child-balances {
+    @apply divide-y divide-border;
+  }
+  .fees-child-balance {
+    @apply flex items-center justify-between gap-3 py-3 text-[0.875rem];
+  }
+  .fees-child-balance span {
+    @apply min-w-0 truncate text-muted;
+  }
+  .fees-child-balance strong {
+    @apply shrink-0 font-semibold;
+  }
+  .fees-pay-now,
+  .fees-payment-submit {
+    @apply inline-flex h-12 items-center justify-center rounded-full border-2 border-foreground px-4 text-sm font-semibold transition-colors active:opacity-85 disabled:pointer-events-none disabled:opacity-55;
+  }
+  .fees-summary-actions {
+    @apply mt-5 flex items-center gap-3;
+  }
+  .fees-pay-now {
+    @apply flex-1;
+  }
+  .fees-reminder-btn {
+    @apply inline-flex h-12 w-12 items-center justify-center rounded-full border border-border bg-white text-foreground transition-colors hover:bg-slate-50;
+  }
+  .fees-pay-now[data-variant="primary"] {
+    @apply border-foreground bg-foreground text-background;
+  }
+  .fees-pay-now[data-variant="outline"] {
+    @apply border-foreground bg-white text-foreground;
+  }
+  .fees-carousel-dots {
+    @apply flex items-center justify-center gap-2;
+  }
+  .fees-carousel-dot {
+    @apply h-2 w-2 rounded-full bg-[#d4d4d8] p-0 transition-all duration-200;
+    border: none;
+  }
+  .fees-carousel-dot[data-active="true"] {
+    @apply w-5 bg-foreground;
+  }
+  .fees-payment-form {
+    @apply space-y-5;
+  }
+  .fees-payment-success {
+    @apply space-y-4 text-center;
+  }
+  .fees-payment-success-icon {
+    @apply mx-auto size-10 text-green-600;
+  }
+  .fees-payment-title {
+    @apply text-base font-semibold text-foreground;
+  }
+  .fees-payment-copy {
+    @apply mt-1 text-[0.8125rem] leading-relaxed text-muted;
+  }
+  .fees-payment-fieldset {
+    @apply min-w-0 border-0 p-0;
+  }
+  .fees-payment-label {
+    @apply mb-2 block text-[0.75rem] font-semibold uppercase tracking-wide text-muted;
+  }
+  .fees-payment-checkbox {
+    @apply cursor-pointer;
+  }
+  .fees-payment-checkbox-main {
+    @apply flex items-center gap-2;
+  }
+  .fees-payment-checkbox-main input {
+    @apply size-4 rounded border-border accent-foreground;
+  }
+  .fees-payment-options {
+    @apply grid gap-2;
+  }
+  .fees-payment-option,
+  .fees-payment-method {
+    @apply flex min-h-11 items-center rounded-lg border border-border bg-white px-3 text-left text-[0.875rem] font-medium text-foreground transition-colors active:bg-muted/50;
+  }
+  .fees-payment-option {
+    @apply justify-between gap-3;
+  }
+  .fees-payment-option span:last-child {
+    @apply shrink-0 text-muted;
+  }
+  .fees-payment-option[data-selected="true"],
+  .fees-payment-method[data-selected="true"] {
+    @apply border-foreground bg-muted/50;
+  }
+  .fees-payment-field {
+    @apply block;
+  }
+  .fees-payment-input-wrap {
+    @apply flex h-12 items-center gap-2 rounded-lg border border-border bg-white px-3 text-sm font-medium text-foreground focus-within:border-foreground;
+  }
+  .fees-payment-input-wrap input {
+    @apply min-w-0 flex-1 bg-transparent outline-none placeholder:text-muted;
+  }
+  .fees-payment-limit {
+    @apply mt-1.5 block text-[0.75rem] text-muted;
+  }
+  .fees-payment-methods {
+    @apply grid grid-cols-3 gap-2;
+  }
+  .fees-payment-method {
+    @apply flex-col justify-center gap-1.5 px-2 py-2 text-center text-[0.75rem];
+  }
+  .fees-payment-method svg {
+    @apply size-4;
+  }
+  .fees-payment-error {
+    @apply -mt-2 text-[0.8125rem] font-medium text-red-700;
+  }
+  .fees-payment-actions {
+    @apply flex flex-col gap-2;
+  }
+  .fees-payment-cta-row {
+    @apply mt-1 flex items-center gap-3;
+  }
+  .fees-payment-cta {
+    @apply flex-1 rounded-full h-12;
+  }
+  .fees-payment-submit {
+    @apply bg-foreground text-background;
+  }
+  .fees-payment-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-foreground bg-white px-4 py-3 text-sm font-semibold text-foreground transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .fees-reminder-actions {
+    @apply mt-5 flex items-center gap-3;
+  }
+  .fees-reminder-cancel,
+  .fees-reminder-confirm {
+    @apply flex-1 rounded-full h-12;
+  }
+  .fees-reminder-cancel {
+    @apply border border-foreground bg-white text-foreground;
+  }
+  .fees-reminder-confirm {
+    @apply bg-foreground text-background;
+  }
+
+  .home-screen {
+    @apply space-y-5 pb-6;
+    margin-bottom: calc(-5.75rem - env(safe-area-inset-bottom));
+  }
+  .home-welcome,
+  .home-welcome-kicker,
+  .home-welcome-heading {
+    display: none;
+  }
+  .home-fees-card {
+    @apply flex items-center gap-3 rounded-xl border border-border px-4 py-4 text-foreground shadow-sm transition-transform active:scale-[0.99];
+    background-color: #ffffff;
+  }
+  .home-fees-icon {
+    @apply relative flex size-11 shrink-0 items-center justify-center rounded-lg text-foreground;
+    background-color: #ebebef;
+  }
+  .home-fees-icon svg {
+    @apply size-5;
+  }
+  .home-fees-status-dot {
+    @apply absolute -right-0.5 -top-0.5 size-2.5 rounded-full;
+    background-color: #f59e0b;
+  }
+  .home-fees-copy {
+    @apply min-w-0 flex-1;
+  }
+  .home-fees-title {
+    @apply block text-[0.9375rem] font-semibold leading-5 text-foreground;
+  }
+  .home-fees-description {
+    @apply mt-0.5 flex min-h-4 items-center gap-1 text-[0.8125rem] leading-4 text-foreground/75;
+  }
+  .home-fees-description-due {
+    color: #b45309;
+  }
+  .home-fees-description svg {
+    @apply size-3.5 shrink-0;
+  }
+  .home-fees-arrow {
+    @apply size-5 shrink-0 text-foreground/75;
+  }
+  .home-wireframe-card {
+    @apply relative overflow-hidden rounded-xl border border-border bg-muted/20;
+  }
+  .home-wireframe-card::before,
+  .home-wireframe-card::after {
+    @apply absolute left-1/2 top-1/2 h-px w-[145%] bg-border/80;
+    content: "";
+  }
+  .home-wireframe-card::before {
+    transform: translate(-50%, -50%) rotate(35deg);
+  }
+  .home-wireframe-card::after {
+    transform: translate(-50%, -50%) rotate(-35deg);
+  }
+  .home-wireframe-card-large {
+    @apply min-h-56;
+  }
+  .home-wireframe-card-medium {
+    @apply min-h-40;
+  }
+  .home-wireframe-card-small {
+    @apply min-h-28;
   }
   .ui-button {
     @apply inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-md border border-foreground/15 bg-primary px-4 py-2.5 text-sm font-medium whitespace-nowrap text-primary-foreground transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0;
@@ -1241,4 +2024,588 @@
   .badge-sheet-comment {
     @apply text-sm leading-relaxed text-foreground;
   }
+
+  /* Fees & Payments Transaction History & PDF Receipt Viewer */
+  .fees-transactions-container {
+    @apply mt-6 space-y-3;
+  }
+  .fees-transactions-header {
+    @apply flex items-center justify-between px-0.5;
+  }
+  .fees-transactions-title {
+    @apply text-base font-semibold text-foreground;
+  }
+  .fees-filter-btn {
+    @apply relative inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border bg-white text-foreground transition-all active:scale-95 hover:bg-muted/40;
+  }
+  .fees-filter-btn[data-active="true"] {
+    @apply border-foreground bg-foreground text-background;
+  }
+  .fees-filter-badge {
+    @apply absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-emerald-600 text-[0.625rem] font-bold text-white;
+  }
+  .fees-active-filters-bar {
+    @apply flex flex-wrap items-center gap-2 py-1;
+  }
+  .fees-active-chip {
+    @apply inline-flex items-center gap-1 rounded-md border border-border bg-muted/50 px-2.5 py-1 text-xs font-medium text-foreground;
+  }
+  .fees-active-chip button {
+    @apply ml-0.5 text-muted hover:text-foreground;
+  }
+  .fees-clear-all-btn {
+    @apply text-xs font-medium text-muted underline decoration-muted/40 hover:text-foreground;
+  }
+  .fees-reset-btn {
+    @apply mt-3 inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-foreground active:scale-95;
+  }
+
+  /* L2 Filter Selection Bottom Sheet */
+  .fees-filter-sheet {
+    @apply max-h-[85dvh] overflow-y-auto rounded-t-2xl border-t border-border bg-white p-4 pt-3 pb-[calc(2rem+env(safe-area-inset-bottom))];
+  }
+  .fees-filter-sheet-header {
+    @apply flex items-center justify-between border-b border-border pb-3;
+  }
+  .fees-filter-sheet-title {
+    @apply text-base font-semibold text-foreground;
+  }
+  .fees-filter-sheet-body {
+    @apply space-y-5 py-4;
+  }
+  .fees-filter-group {
+    @apply space-y-2;
+  }
+  .fees-filter-group-label {
+    @apply block text-xs font-semibold uppercase tracking-wider text-muted;
+  }
+  .fees-filter-options-grid {
+    @apply grid gap-2;
+  }
+  .fees-filter-children-grid {
+    @apply grid gap-2;
+  }
+  .fees-filter-child-option {
+    @apply flex items-center gap-3 rounded-2xl border border-border bg-card px-3.5 py-3 text-left text-sm font-medium text-foreground transition-all active:scale-[0.99];
+  }
+  .fees-filter-child-option[data-selected="true"] {
+    @apply border-foreground bg-emerald-50;
+  }
+  .fees-filter-child-avatar {
+    @apply flex h-11 w-11 items-center justify-center rounded-full text-sm font-semibold text-slate-900 bg-slate-200;
+  }
+  .fees-filter-child-option[data-child="child_1"] .fees-filter-child-avatar {
+    background: #d9c6a6;
+    color: #2c2c2c;
+  }
+  .fees-filter-child-option[data-child="child_2"] .fees-filter-child-avatar {
+    background: #d0e4ff;
+    color: #1d4ed8;
+  }
+  .fees-filter-child-name {
+    @apply text-sm font-semibold text-foreground;
+  }
+  .fees-filter-child-meta {
+    @apply text-xs text-muted;
+  }
+  .fees-filter-option-btn {
+    @apply flex items-center justify-between rounded-xl border border-border bg-card px-3.5 py-2.5 text-left text-sm font-medium text-foreground transition-all active:scale-[0.99];
+  }
+  .fees-filter-option-btn[data-selected="true"] {
+    @apply border-foreground bg-foreground text-background font-semibold;
+  }
+  .fees-filter-option-btn[data-selected="true"] span {
+    @apply text-background;
+  }
+  .fees-date-field {
+    @apply flex flex-col gap-2;
+  }
+  .fees-date-label {
+    @apply text-xs font-semibold uppercase tracking-wider text-muted;
+  }
+  .fees-date-input {
+    @apply rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground transition-colors focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground/10;
+  }
+  .fees-filter-date-grid {
+    @apply grid gap-3 sm:grid-cols-2;
+  }
+  .fees-filter-sheet-footer {
+    @apply flex items-center gap-3 border-t border-border pt-3;
+  }
+  .fees-filter-reset-btn {
+    @apply inline-flex h-12 flex-1 items-center justify-center gap-1.5 rounded-full border border-foreground bg-white px-4 text-sm font-semibold text-foreground transition-all active:scale-[0.98];
+  }
+  .fees-filter-apply-btn {
+    @apply inline-flex h-12 flex-1 items-center justify-center rounded-full border border-foreground bg-foreground px-4 text-sm font-semibold text-background transition-all active:scale-[0.98];
+  }
+  .fees-transactions-empty {
+    @apply rounded-xl border border-dashed border-border bg-muted/20 p-6 text-center;
+  }
+  .fees-empty-title {
+    @apply text-sm font-semibold text-foreground;
+  }
+  .fees-empty-desc {
+    @apply mt-1 text-xs text-muted;
+  }
+  .fees-transaction-list {
+    @apply space-y-2;
+  }
+  .fees-transaction-card {
+    @apply flex w-full items-center gap-3 rounded-xl border border-border bg-white p-3.5 text-left transition-all active:scale-[0.99] active:bg-muted/40;
+  }
+  .fees-tx-icon-box {
+    @apply flex size-10 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/30 text-foreground;
+  }
+  .fees-tx-avatar {
+    @apply flex size-10 shrink-0 items-center justify-center rounded-full border border-border/50 text-[0.7rem] font-semibold;
+    background: #f8fafc;
+    color: #0f172a;
+  }
+  .fees-tx-avatar[data-child="child_1"] {
+    background: #d9c6a6;
+    color: #2c2c2c;
+    border-color: rgba(44, 44, 44, 0.15);
+  }
+  .fees-tx-avatar[data-child="child_2"] {
+    background: #d0e4ff;
+    color: #1d4ed8;
+    border-color: rgba(29, 78, 216, 0.2);
+  }
+  .fees-tx-icon {
+    @apply size-5;
+  }
+  .fees-tx-main {
+    @apply min-w-0 flex-1 space-y-1;
+  }
+  .fees-tx-title {
+    @apply text-sm font-semibold text-foreground truncate leading-tight;
+  }
+  .fees-tx-meta-row {
+    @apply flex items-center gap-1.5 text-xs text-muted;
+  }
+  .fees-tx-dot {
+    @apply text-muted/60 text-[0.625rem];
+  }
+  .fees-tx-date {
+    @apply text-xs text-muted font-medium;
+  }
+  .fees-tx-child-name {
+    @apply text-xs font-medium text-foreground/85;
+  }
+  .fees-tx-term {
+    @apply text-xs font-medium text-muted truncate;
+  }
+  .fees-tx-meta {
+    @apply text-[0.75rem] text-muted/80 truncate;
+  }
+
+  .fees-payment-success-sheet {
+    @apply max-h-[85dvh] rounded-t-2xl border-t border-border bg-white p-6 pb-[calc(2rem+env(safe-area-inset-bottom))];
+  }
+  .fees-payment-success-card {
+    @apply flex flex-col items-center gap-4 text-center;
+  }
+  .fees-payment-success-icon {
+    @apply size-12 text-emerald-700;
+  }
+  .fees-payment-processing-icon {
+    @apply size-12 animate-spin text-foreground;
+  }
+  .fees-payment-success-title {
+    @apply text-lg font-semibold text-foreground;
+  }
+  .fees-payment-success-copy {
+    @apply text-sm leading-relaxed text-muted;
+  }
+  .fees-payment-success-actions {
+    @apply mt-4 flex w-full flex-col gap-3;
+  }
+  .fees-payment-submit {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-foreground px-4 py-3 text-sm font-semibold text-background transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .fees-payment-form {
+    @apply space-y-5;
+  }
+  .fees-payment-child-list {
+    @apply space-y-3;
+  }
+  .fees-payment-child-card {
+    @apply rounded-2xl border border-border bg-white p-4;
+  }
+  .fees-payment-child-card[data-selected="true"] {
+    @apply border-foreground/40;
+  }
+  .fees-payment-child-header {
+    @apply flex items-center justify-between gap-3;
+  }
+  .fees-payment-child-select {
+    @apply flex min-w-0 flex-1 items-center gap-3 text-sm font-medium text-foreground;
+  }
+  .fees-payment-child-select input {
+    @apply size-4 shrink-0 accent-foreground;
+  }
+  .fees-payment-child-name {
+    @apply min-w-0 truncate;
+  }
+  .fees-payment-child-header-end {
+    @apply flex shrink-0 items-center gap-2 text-sm text-foreground;
+  }
+  .fees-payment-expand-icon {
+    @apply size-4 shrink-0 text-muted transition-transform;
+  }
+  .fees-payment-expand-icon[data-expanded="true"] {
+    transform: rotate(180deg);
+  }
+  .fees-payment-header {
+    @apply shrink-0 pb-5;
+  }
+  .fees-payment-student {
+    @apply mt-4 flex items-center gap-3.5 rounded-xl border border-border/60 bg-secondary px-4 py-3.5;
+  }
+  .fees-payment-student-copy {
+    @apply flex min-w-0 flex-col gap-0.5;
+  }
+  .fees-payment-student-name {
+    @apply truncate text-sm font-semibold text-foreground;
+  }
+  .fees-payment-student-meta {
+    @apply text-[0.75rem] text-muted;
+  }
+  .fees-payment-body {
+    @apply min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain pb-5;
+  }
+  .fees-payment-footer {
+    @apply -mx-4 shrink-0 space-y-3 border-t border-border bg-white px-4 pt-3 pb-[calc(1.25rem+env(safe-area-inset-bottom))];
+  }
+  .fees-payment-breakdown-title {
+    @apply text-[0.8125rem] font-semibold text-foreground;
+  }
+  .fees-payment-plan {
+    @apply grid min-w-0 grid-cols-2 gap-2 border-0 p-0;
+  }
+  .fees-payment-plan-legend {
+    @apply mb-2 text-[0.8125rem] font-semibold text-foreground;
+  }
+  .fees-payment-plan-option {
+    @apply flex min-w-0 items-start gap-2 rounded-xl border border-border bg-white px-3 py-3 text-left;
+  }
+  .fees-payment-plan-option[data-selected="true"] {
+    @apply border-foreground bg-muted/40;
+  }
+  .fees-payment-plan-option input {
+    @apply mt-1 size-4 shrink-0 accent-foreground;
+  }
+  .fees-payment-plan-copy {
+    @apply flex min-w-0 flex-1 flex-col gap-0.5;
+  }
+  .fees-payment-plan-title {
+    @apply text-[0.875rem] font-semibold text-foreground;
+  }
+  .fees-payment-plan-meta {
+    @apply text-[0.75rem] text-muted;
+  }
+  .fees-payment-total-row {
+    @apply flex items-center justify-between gap-3 rounded-2xl border border-border bg-muted/20 px-4 py-3 text-sm font-semibold text-foreground;
+  }
+  .fees-payment-fieldset {
+    @apply space-y-3 border border-border rounded-2xl bg-white p-4;
+  }
+  .fees-payment-label {
+    @apply text-xs font-semibold uppercase tracking-wider text-muted;
+  }
+  .fees-payment-options {
+    @apply space-y-3;
+  }
+  .fees-payment-option {
+    @apply flex items-center justify-between rounded-2xl border border-border bg-white px-4 py-3 text-sm font-medium text-foreground;
+  }
+  .fees-payment-checkbox {
+    @apply gap-3;
+  }
+  .fees-payment-checkbox-main {
+    @apply flex items-center gap-3;
+  }
+  .fees-payment-methods {
+    @apply grid gap-2 sm:grid-cols-3;
+  }
+  .fees-payment-method {
+    @apply flex items-center gap-2 rounded-2xl border border-border bg-white px-4 py-3 text-sm font-semibold text-foreground transition-all active:scale-[0.98];
+  }
+  .fees-payment-method[data-selected="true"] {
+    @apply border-foreground bg-foreground text-background;
+  }
+  .fees-tx-end {
+    @apply flex shrink-0 items-center gap-2 text-right;
+  }
+  .fees-tx-amount {
+    @apply text-sm font-bold text-foreground;
+  }
+  .fees-tx-status {
+    @apply inline-flex items-center gap-1 rounded-md border border-emerald-200 bg-emerald-50 px-1.5 py-0.5 text-[0.6875rem] font-semibold text-emerald-800;
+  }
+  .fees-tx-arrow {
+    @apply size-4 text-muted;
+  }
+
+  /* Payment Details Sheet (L2) */
+  .fees-details-sheet {
+    @apply max-h-[92dvh] overflow-y-auto rounded-t-2xl border-t border-border bg-white p-4 pt-3 pb-[calc(2rem+env(safe-area-inset-bottom))];
+  }
+  .fees-breakdown-empty {
+    @apply py-6 text-center text-sm text-muted;
+  }
+  .fees-breakdown-items {
+    @apply mt-1 divide-y divide-border/50;
+  }
+  .fees-breakdown-item {
+    @apply flex items-start justify-between gap-3 py-2.5 text-sm text-foreground;
+  }
+  .fees-breakdown-item-copy {
+    @apply flex min-w-0 flex-col;
+  }
+  .fees-breakdown-item-note {
+    @apply mt-0.5 text-xs text-muted;
+  }
+  .fees-breakdown-item-amount {
+    @apply shrink-0 tabular-nums;
+  }
+  .fees-breakdown-summary {
+    @apply mt-5 space-y-2 border-t border-border pt-4;
+  }
+  .fees-breakdown-summary-row {
+    @apply flex items-center justify-between gap-3 text-sm text-foreground;
+  }
+  .fees-breakdown-summary-row strong {
+    @apply shrink-0 font-semibold tabular-nums;
+  }
+  .fees-breakdown-summary-row[data-tone="paid"] {
+    @apply text-green-800;
+  }
+  .fees-breakdown-summary-total {
+    @apply border-t border-border/70 pt-2 text-base font-semibold;
+  }
+  .fees-breakdown-summary-total:first-child {
+    @apply border-t-0 pt-0;
+  }
+  .fees-details-header {
+    @apply flex items-center justify-between border-b border-border pb-3;
+  }
+  .fees-details-header-title {
+    @apply flex items-center gap-2;
+  }
+  .fees-details-header-title h3 {
+    @apply text-base font-semibold text-foreground;
+  }
+  .fees-details-close {
+    @apply rounded-lg p-1.5 text-muted hover:bg-muted active:scale-95;
+  }
+  .fees-details-body {
+    @apply space-y-4 pt-3;
+  }
+  .fees-details-hero {
+    @apply rounded-xl border border-border bg-white p-4 text-center;
+  }
+  .fees-details-icon-wrapper {
+    @apply mx-auto mb-2 flex size-12 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700;
+  }
+  .fees-details-hero-icon {
+    @apply size-6;
+  }
+  .fees-details-hero-label {
+    @apply text-xs font-semibold uppercase tracking-wide text-muted;
+  }
+  .fees-details-hero-amount {
+    @apply text-2xl font-bold tracking-tight text-foreground mt-0.5;
+  }
+  .fees-details-hero-date {
+    @apply mt-1 text-xs text-muted;
+  }
+  .fees-details-card {
+    @apply rounded-xl border border-border bg-white p-3.5 space-y-2;
+  }
+  .fees-card-heading {
+    @apply text-xs font-semibold uppercase tracking-wider text-muted mb-2;
+  }
+  .fees-details-grid {
+    @apply space-y-2;
+  }
+  .fees-detail-row {
+    @apply flex items-center justify-between text-xs;
+  }
+  .fees-detail-row:first-child {
+    @apply pt-0;
+  }
+  .fees-detail-label {
+    @apply text-muted font-medium;
+  }
+  .fees-detail-value {
+    @apply font-semibold text-foreground text-right;
+  }
+  .fees-breakdown-details {
+    @apply rounded-xl border border-border bg-white p-4 shadow-sm;
+  }
+  .fees-breakdown-details .fees-breakdown-summary {
+    @apply text-sm font-semibold text-foreground mb-3;
+  }
+  .fees-breakdown-details .fees-breakdown-summary-chevron {
+    @apply hidden;
+  }
+  .fees-breakdown-details .fees-breakdown-list {
+    @apply space-y-2 text-xs;
+  }
+  .fees-breakdown-details .fees-breakdown-row {
+    @apply flex items-center justify-between;
+  }
+  .fees-breakdown-details .fees-breakdown-row:first-child {
+    @apply pt-0;
+  }
+  .fees-breakdown-details .fees-breakdown-item {
+    @apply text-foreground font-medium;
+  }
+  .fees-breakdown-details .fees-breakdown-amount {
+    @apply font-semibold text-foreground;
+  }
+  .fees-breakdown-details .fees-breakdown-total {
+    @apply pt-1 font-bold text-sm text-foreground;
+  }
+  .fees-details-actions {
+    @apply pt-2 grid gap-2;
+  }
+  .fees-details-actions-row {
+    @apply grid gap-2 sm:grid-cols-[1fr_auto];
+  }
+  .fees-download-receipt-btn,
+  .fees-details-cancel-btn {
+    @apply flex h-12 items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold transition-all active:scale-[0.98];
+  }
+  .fees-download-receipt-btn {
+    @apply w-full border border-foreground bg-foreground text-background;
+  }
+  .fees-details-cancel-btn {
+    @apply w-full border border-border bg-background text-foreground;
+  }
+
+  /* Official PDF Receipt Modal */
+  .fees-pdf-sheet {
+    @apply max-h-[96dvh] overflow-hidden rounded-t-2xl border-t border-border bg-neutral-900 p-0 text-foreground;
+  }
+  .fees-pdf-actionbar {
+    @apply flex items-center justify-between border-b border-neutral-800 bg-neutral-950 px-4 py-3 text-white;
+  }
+  .fees-pdf-actionbar-title {
+    @apply flex items-center gap-2 text-sm font-semibold;
+  }
+  .fees-pdf-tag {
+    @apply rounded-md border border-neutral-700 bg-neutral-800 px-2 py-0.5 font-mono text-xs text-neutral-300;
+  }
+  .fees-pdf-actions {
+    @apply flex items-center gap-2;
+  }
+  .fees-pdf-action-btn {
+    @apply inline-flex h-9 items-center gap-1.5 rounded-lg border border-neutral-700 bg-neutral-800 px-3 text-xs font-semibold text-neutral-200 transition-colors hover:bg-neutral-700 active:scale-95;
+  }
+  .fees-pdf-close-btn {
+    @apply rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-800 hover:text-white active:scale-95;
+  }
+  .fees-pdf-document-scroll {
+    @apply max-h-[calc(96dvh-3.5rem)] overflow-y-auto p-4 md:p-6 bg-neutral-900;
+  }
+  .fees-pdf-document {
+    @apply relative mx-auto max-w-2xl rounded-xl border border-neutral-200 bg-white p-6 shadow-xl text-neutral-900 overflow-hidden;
+  }
+  .fees-pdf-watermark {
+    @apply absolute inset-0 flex items-center justify-center text-6xl font-black tracking-widest text-neutral-100 pointer-events-none select-none rotate-[-30deg] opacity-60;
+  }
+  .fees-pdf-header {
+    @apply flex flex-col md:flex-row md:items-start justify-between gap-4 relative z-10;
+  }
+  .fees-pdf-brand {
+    @apply flex items-start gap-3;
+  }
+  .fees-pdf-logo {
+    @apply flex size-12 shrink-0 items-center justify-center rounded-xl bg-neutral-900 text-white;
+  }
+  .fees-pdf-school-name {
+    @apply text-base font-black tracking-tight text-neutral-900;
+  }
+  .fees-pdf-school-sub {
+    @apply text-xs font-semibold text-neutral-600;
+  }
+  .fees-pdf-school-address {
+    @apply text-[0.75rem] text-neutral-500 mt-0.5;
+  }
+  .fees-pdf-stamp-verified {
+    @apply inline-flex items-center gap-1.5 self-start rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800;
+  }
+  .fees-pdf-divider {
+    @apply my-4 h-px w-full bg-neutral-200;
+  }
+  .fees-pdf-title-block {
+    @apply text-center my-3;
+  }
+  .fees-pdf-title {
+    @apply text-base font-black tracking-wider text-neutral-900 uppercase;
+  }
+  .fees-pdf-receipt-no {
+    @apply text-xs text-neutral-600 mt-0.5;
+  }
+  .fees-pdf-meta-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-3 rounded-lg border border-neutral-200 bg-neutral-50 p-3.5 text-xs my-4 relative z-10;
+  }
+  .fees-pdf-meta-col p {
+    @apply flex justify-between py-1 border-b border-neutral-200/60 last:border-b-0;
+  }
+  .fees-pdf-meta-col span {
+    @apply text-neutral-500 font-medium;
+  }
+  .fees-pdf-table {
+    @apply w-full text-xs text-left my-4 border-collapse relative z-10;
+  }
+  .fees-pdf-table th {
+    @apply border-b border-neutral-300 bg-neutral-100 p-2.5 font-bold text-neutral-800 uppercase tracking-wider text-[0.75rem];
+  }
+  .fees-pdf-table td {
+    @apply border-b border-neutral-200 p-2.5 text-neutral-800;
+  }
+  .fees-pdf-words {
+    @apply rounded-lg bg-neutral-100 p-3 text-xs text-neutral-700 my-4 border border-neutral-200 relative z-10;
+  }
+  .fees-pdf-footer {
+    @apply flex flex-col md:flex-row items-end justify-between gap-4 mt-6 pt-4 border-t border-neutral-200 text-xs relative z-10;
+  }
+  .fees-pdf-note {
+    @apply text-[0.75rem] text-neutral-500 space-y-0.5 max-w-xs;
+  }
+  .fees-pdf-sign-box {
+    @apply text-center border-t border-dashed border-neutral-400 pt-2 min-w-44;
+  }
+  .fees-pdf-signature-graphic {
+    @apply font-serif italic text-lg font-bold text-neutral-800 mb-1 tracking-wider;
+  }
+  .fees-pdf-sign-title {
+    @apply font-bold text-neutral-900 text-[0.8125rem];
+  }
+  .fees-pdf-sign-sub {
+    @apply text-[0.6875rem] text-neutral-500;
+  }
+
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    #printable-receipt, #printable-receipt * {
+      visibility: visible;
+    }
+    #printable-receipt {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      margin: 0;
+      padding: 20px;
+      box-shadow: none;
+      border: none;
+    }
+  }
 }
+

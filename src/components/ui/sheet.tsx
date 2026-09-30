@@ -47,8 +47,9 @@ export function Sheet({ open, onOpenChange, children }: SheetProps) {
   return <SheetContext.Provider value={{ open, onOpenChange }}>{children}</SheetContext.Provider>
 }
 
-interface SheetContentProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "className" | "style"> {
+interface SheetContentProps extends React.HTMLAttributes<HTMLDivElement> {
   side?: SheetSide
+  className?: string
 }
 
 const sideClassNameMap: Record<SheetSide, string> = {
@@ -60,6 +61,7 @@ const sideClassNameMap: Record<SheetSide, string> = {
 
 export function SheetContent({
   side = "right",
+  className = "",
   children,
   ...props
 }: SheetContentProps) {
@@ -83,7 +85,7 @@ export function SheetContent({
       <div
         role="dialog"
         aria-modal="true"
-        className={`sheet-content ${sideClassNameMap[side]}`}
+        className={`sheet-content ${sideClassNameMap[side]} ${className}`}
         onMouseDown={(event) => event.stopPropagation()}
         onTouchStart={(event) => event.stopPropagation()}
         {...props}

@@ -1,19 +1,25 @@
+import { useCallback, useRef, useState } from "react"
+import { ChevronDown } from "lucide-react"
 import { Outlet } from "react-router-dom"
 import { BottomNav } from "@/app/components/BottomNav"
+import { ChildSwitcherMenu } from "@/app/components/ChildSwitcherMenu"
 import { useActiveChild } from "@/shared/hooks/useActiveChild"
+import {
+  getChildAvatarFallback,
+  getChildAvatarSrc,
+  getChildGradeLabel,
+} from "@/shared/utils/child"
 import { useAppStore } from "@/store/rootStore"
 
 export function AppLayout() {
   const { activeChildId } = useActiveChild()
-  const activeChild = useAppStore((state) => state.children[activeChildId])
-  const gradeLabel = activeChild
-    ? activeChild.class.toLowerCase().startsWith("grade")
-      ? `${activeChild.class}-${activeChild.section}`
-      : `Grade ${activeChild.class}-${activeChild.section}`
-    : "Loading child profile..."
-  const avatarName = encodeURIComponent(activeChild?.name ?? "Student")
-  const fallbackAvatar = `https://ui-avatars.com/api/?name=${avatarName}&background=F4F4F5&color=171717&size=128&bold=true`
-  const avatarSrc = activeChild?.photoUrl ?? fallbackAvatar
+  const children = useAppStore((state) => state.children)
+  const [isSwitcherOpen, setSwitcherOpen] = useState(false)
+  const switcherTriggerRef = useRef<HTMLButtonElement>(null)
+  const closeSwitcher = useCallback(() => setSwitcherOpen(false), [])
+
+  const activeChild = children[activeChildId]
+  const canSwitch = Object.keys(children).length > 1
 
   return (
     <div className="app-layout-root">
@@ -25,21 +31,48 @@ export function AppLayout() {
               alt="Ether"
               className="app-layout-logo"
             />
-            <div className="app-layout-profile">
-              <div className="app-layout-profile-info">
-                <p className="app-layout-profile-name">
-                  {activeChild?.name ?? "Loading..."}
-                </p>
-                <p className="app-layout-profile-byline">{gradeLabel}</p>
-              </div>
-              <img
-                src={avatarSrc}
-                alt={`${activeChild?.name ?? "Student"} profile`}
-                className="app-layout-profile-photo"
-                loading="lazy"
-                onError={(event) => {
-                  event.currentTarget.src = fallbackAvatar
-                }}
+            <div className="app-layout-profile-anchor">
+              <button
+                ref={switcherTriggerRef}
+                type="button"
+                className="app-layout-profile-switch"
+                aria-haspopup="menu"
+                aria-expanded={isSwitcherOpen}
+                aria-label={
+                  activeChild ? `Switch child, currently viewing ${activeChild.name}` : "Switch child"
+                }
+                disabled={!canSwitch}
+                onClick={() => setSwitcherOpen((open) => !open)}
+              >
+                <div className="app-layout-profile">
+                  <div className="app-layout-profile-info">
+                    <p className="app-layout-profile-name">
+                      {activeChild?.name ?? "Loading..."}
+                    </p>
+                    <p className="app-layout-profile-byline">{getChildGradeLabel(activeChild)}</p>
+                  </div>
+                  <img
+                    src={getChildAvatarSrc(activeChild)}
+                    alt=""
+                    className="app-layout-profile-photo"
+                    loading="lazy"
+                    onError={(event) => {
+                      event.currentTarget.src = getChildAvatarFallback(activeChild?.name)
+                    }}
+                  />
+                  {canSwitch ? (
+                    <ChevronDown
+                      className="app-layout-profile-chevron"
+                      data-open={isSwitcherOpen ? "true" : "false"}
+                      aria-hidden
+                    />
+                  ) : null}
+                </div>
+              </button>
+              <ChildSwitcherMenu
+                isOpen={isSwitcherOpen}
+                onClose={closeSwitcher}
+                triggerRef={switcherTriggerRef}
               />
             </div>
           </div>

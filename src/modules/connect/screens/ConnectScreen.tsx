@@ -1,5 +1,6 @@
 import { useMemo, useState, type ChangeEvent } from "react"
 import dayjs from "dayjs"
+import relativeTime from "dayjs/plugin/relativeTime"
 import {
   ArrowLeft,
   Calendar,
@@ -8,7 +9,6 @@ import {
   FileText,
   Image,
   Info,
-  Megaphone,
   Mic,
   Paperclip,
   Play,
@@ -19,17 +19,31 @@ import {
   X,
 } from "lucide-react"
 import {
+  ConnectSectionTabs,
+  type ConnectTab,
+} from "@/modules/connect/components/ConnectSectionTabs"
+import { AnnouncementFilters } from "@/modules/connect/components/AnnouncementFilters"
+import {
   connectAnnouncements,
   connectConversations,
 } from "@/modules/connect/data/mockConnectData"
 import type {
   Announcement,
+  AnnouncementScopeFilter,
+  AnnouncementTypeFilter,
   Conversation,
   Message,
+} from "@/modules/connect/types"
+import {
+  announcementKindLabels,
 } from "@/modules/connect/types"
 import { PageTitle } from "@/shared/components/PageTitle"
 import { useActiveChild } from "@/shared/hooks/useActiveChild"
 import { useAppStore } from "@/store/rootStore"
+
+dayjs.extend(relativeTime)
+
+const ANNOUNCEMENT_BODY_CLAMP_THRESHOLD = 180
 
 function formatTime(value: string) {
   return dayjs(value).format("h:mm A")
@@ -39,6 +53,69 @@ function formatShortDate(value: string) {
   return dayjs(value).format("D MMM")
 }
 
+function formatRelativeTime(value: string) {
+  return dayjs(value).fromNow()
+}
+
+function authorInitials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("")
+}
+
+function sortAnnouncements(announcements: Announcement[]) {
+  return announcements.slice().sort((a, b) => {
+    if (a.pinned && !b.pinned) {
+      return -1
+    }
+    if (!a.pinned && b.pinned) {
+      return 1
+    }
+    return dayjs(b.timestamp).valueOf() - dayjs(a.timestamp).valueOf()
+  })
+}
+
+function filterAnnouncements(
+  announcements: Announcement[],
+  typeFilter: AnnouncementTypeFilter,
+  scopeFilter: AnnouncementScopeFilter,
+  searchQuery: string,
+) {
+  const normalizedSearch = searchQuery.trim().toLowerCase()
+
+  const filtered = announcements.filter((announcement) => {
+    if (typeFilter !== "all" && announcement.kind !== typeFilter) {
+      return false
+    }
+    if (scopeFilter !== "all" && announcement.scope !== scopeFilter) {
+      return false
+    }
+    if (!normalizedSearch) {
+      return true
+    }
+
+    const searchable = [
+      announcement.title,
+      announcement.preview,
+      announcement.body,
+      announcement.author,
+      announcement.groupName,
+      announcement.kudos?.awardTitle,
+      announcement.kudos?.comment,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase()
+
+    return searchable.includes(normalizedSearch)
+  })
+
+  return sortAnnouncements(filtered)
+}
+
 function cx(...classes: Array<string | false | undefined>) {
   return classes.filter(Boolean).join(" ")
 }
@@ -46,9 +123,13 @@ function cx(...classes: Array<string | false | undefined>) {
 export function ConnectScreen() {
   const { activeChildId } = useActiveChild()
   const activeChild = useAppStore((state) => state.children[activeChildId])
+  const [activeConnectTab, setActiveConnectTab] = useState<ConnectTab>("chat")
   const [searchQuery, setSearchQuery] = useState("")
-  const [isAnnouncementFeedOpen, setIsAnnouncementFeedOpen] = useState(false)
-  const [selectedAnnouncementId, setSelectedAnnouncementId] = useState<string | null>(null)
+  const [announcementSearchQuery, setAnnouncementSearchQuery] = useState("")
+  const [announcementTypeFilter, setAnnouncementTypeFilter] =
+    useState<AnnouncementTypeFilter>("all")
+  const [announcementScopeFilter, setAnnouncementScopeFilter] =
+    useState<AnnouncementScopeFilter>("all")
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null)
   const [isGroupInfoOpen, setIsGroupInfoOpen] = useState(false)
   const [draft, setDraft] = useState("")
@@ -71,9 +152,6 @@ export function ConnectScreen() {
   )
   const selectedConversation =
     conversations.find((conversation) => conversation.id === selectedConversationId) ??
-    null
-  const selectedAnnouncement =
-    announcements.find((announcement) => announcement.id === selectedAnnouncementId) ??
     null
 
   const normalizedQuery = searchQuery.trim().toLowerCase()
@@ -110,9 +188,6 @@ export function ConnectScreen() {
     return { groups, teachers, messages }
   }, [chatConversations, normalizedQuery])
   const unreadAnnouncementCount = announcements.filter((announcement) => announcement.unread).length
-  const latestAnnouncement = announcements
-    .slice()
-    .sort((a, b) => dayjs(b.timestamp).valueOf() - dayjs(a.timestamp).valueOf())[0]
 
   function openConversation(id: string) {
     setSelectedConversationId(id)
@@ -185,29 +260,6 @@ export function ConnectScreen() {
     event.target.value = ""
   }
 
-  if (selectedAnnouncement) {
-    return (
-      <AnnouncementDetailView
-        announcement={selectedAnnouncement}
-        onBack={() => setSelectedAnnouncementId(null)}
-      />
-    )
-  }
-
-  if (isAnnouncementFeedOpen) {
-    return (
-      <AnnouncementFeedView
-        activeChildName={activeChild?.name ?? "Active child"}
-        announcements={announcements}
-        onBack={() => {
-          setIsAnnouncementFeedOpen(false)
-          setSelectedAnnouncementId(null)
-        }}
-        onOpenAnnouncement={setSelectedAnnouncementId}
-      />
-    )
-  }
-
   if (selectedConversation && isGroupInfoOpen) {
     return (
       <GroupInfoView
@@ -240,209 +292,217 @@ export function ConnectScreen() {
         Connect
       </PageTitle>
 
-      <AnnouncementShortcut
-        latestAnnouncement={latestAnnouncement}
-        unreadCount={unreadAnnouncementCount}
-        onOpen={() => setIsAnnouncementFeedOpen(true)}
+      <ConnectSectionTabs
+        activeTab={activeConnectTab}
+        unreadAnnouncementCount={unreadAnnouncementCount}
+        onTabChange={setActiveConnectTab}
       />
 
-      <label className="connect-search">
-        <Search className="connect-search-icon" aria-hidden />
-        <input
-          value={searchQuery}
-          onChange={(event) => setSearchQuery(event.target.value)}
-          placeholder="Search groups, teachers, messages"
-          className="connect-search-input"
-          aria-label="Search conversations"
-        />
-        {searchQuery ? (
-          <button
-            type="button"
-            className="connect-search-clear"
-            onClick={() => setSearchQuery("")}
-            aria-label="Clear search"
-          >
-            <X className="connect-search-clear-icon" aria-hidden />
-          </button>
-        ) : null}
-      </label>
+      {activeConnectTab === "chat" ? (
+        <>
+          <label className="connect-search">
+            <Search className="connect-search-icon" aria-hidden />
+            <input
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search groups, teachers, messages"
+              className="connect-search-input"
+              aria-label="Search conversations"
+            />
+            {searchQuery ? (
+              <button
+                type="button"
+                className="connect-search-clear"
+                onClick={() => setSearchQuery("")}
+                aria-label="Clear search"
+              >
+                <X className="connect-search-clear-icon" aria-hidden />
+              </button>
+            ) : null}
+          </label>
 
-      {normalizedQuery ? (
-        <SearchResults
-          groups={searchResults.groups}
-          teachers={searchResults.teachers}
-          messages={searchResults.messages}
-          onOpenConversation={openConversation}
-        />
+          {normalizedQuery ? (
+            <SearchResults
+              groups={searchResults.groups}
+              teachers={searchResults.teachers}
+              messages={searchResults.messages}
+              onOpenConversation={openConversation}
+            />
+          ) : (
+            <ChatsList
+              conversations={chatConversations}
+              onOpenConversation={openConversation}
+            />
+          )}
+        </>
       ) : (
-        <ChatsList
-          conversations={chatConversations}
-          onOpenConversation={openConversation}
+        <AnnouncementFeed
+          announcements={announcements}
+          searchQuery={announcementSearchQuery}
+          typeFilter={announcementTypeFilter}
+          scopeFilter={announcementScopeFilter}
+          onSearchChange={setAnnouncementSearchQuery}
+          onTypeFilterChange={setAnnouncementTypeFilter}
+          onScopeFilterChange={setAnnouncementScopeFilter}
         />
       )}
     </section>
   )
 }
 
-function AnnouncementShortcut({
-  latestAnnouncement,
-  unreadCount,
-  onOpen,
-}: {
-  latestAnnouncement?: Announcement
-  unreadCount: number
-  onOpen: () => void
-}) {
-  return (
-    <button type="button" className="announcement-shortcut" onClick={onOpen}>
-      <span className="announcement-shortcut-icon">
-        <Megaphone className="chat-icon" aria-hidden />
-      </span>
-      <span className="announcement-shortcut-copy">
-        <span className="announcement-shortcut-title-row">
-          <span className="announcement-shortcut-title">Announcements</span>
-          {unreadCount > 0 ? (
-            <span className="announcement-shortcut-count">{unreadCount}</span>
-          ) : null}
-        </span>
-        <span className="announcement-shortcut-preview">
-          {latestAnnouncement
-            ? `${latestAnnouncement.title}: ${latestAnnouncement.preview}`
-            : "School updates will appear here"}
-        </span>
-      </span>
-    </button>
-  )
-}
-
-function AnnouncementFeedView({
-  activeChildName,
+function AnnouncementFeed({
   announcements,
-  onBack,
-  onOpenAnnouncement,
+  searchQuery,
+  typeFilter,
+  scopeFilter,
+  onSearchChange,
+  onTypeFilterChange,
+  onScopeFilterChange,
 }: {
-  activeChildName: string
   announcements: Announcement[]
-  onBack: () => void
-  onOpenAnnouncement: (id: string) => void
+  searchQuery: string
+  typeFilter: AnnouncementTypeFilter
+  scopeFilter: AnnouncementScopeFilter
+  onSearchChange: (query: string) => void
+  onTypeFilterChange: (filter: AnnouncementTypeFilter) => void
+  onScopeFilterChange: (filter: AnnouncementScopeFilter) => void
 }) {
-  const sortedAnnouncements = announcements
-    .slice()
-    .sort((a, b) => dayjs(b.timestamp).valueOf() - dayjs(a.timestamp).valueOf())
+  const filteredAnnouncements = useMemo(
+    () => filterAnnouncements(announcements, typeFilter, scopeFilter, searchQuery),
+    [announcements, typeFilter, scopeFilter, searchQuery],
+  )
 
-  return (
-    <section className="announcement-feed-screen">
-      <header className="chat-header">
-        <button type="button" className="chat-icon-button" onClick={onBack} aria-label="Back to Connect">
-          <ArrowLeft className="chat-icon" aria-hidden />
-        </button>
-        <div className="chat-header-copy">
-          <span className="chat-header-title">Announcements</span>
-          <span className="chat-header-subtitle">{activeChildName}</span>
-        </div>
-      </header>
-
-      {sortedAnnouncements.length > 0 ? (
-        <div className="announcement-feed-list">
-          {sortedAnnouncements.map((announcement) => (
-            <AnnouncementCard
-              key={announcement.id}
-              announcement={announcement}
-              onOpen={() => onOpenAnnouncement(announcement.id)}
-            />
-          ))}
-        </div>
-      ) : (
+  if (announcements.length === 0) {
+    return (
+      <>
+        <AnnouncementFilters
+          searchQuery={searchQuery}
+          typeFilter={typeFilter}
+          scopeFilter={scopeFilter}
+          onSearchChange={onSearchChange}
+          onTypeFilterChange={onTypeFilterChange}
+          onScopeFilterChange={onScopeFilterChange}
+        />
         <EmptyState
           title="No announcements"
           subtitle="School updates for this child will appear here"
         />
-      )}
-    </section>
-  )
-}
+      </>
+    )
+  }
 
-function AnnouncementCard({
-  announcement,
-  onOpen,
-}: {
-  announcement: Announcement
-  onOpen: () => void
-}) {
   return (
-    <button type="button" className="announcement-card" onClick={onOpen}>
-      <span className="announcement-card-topline">
-        <span className="announcement-type-label">{announcement.kind}</span>
-        <span>{formatShortDate(announcement.timestamp)}</span>
-      </span>
-      <span className="announcement-card-title-row">
-        <span className="announcement-card-title">{announcement.title}</span>
-        {announcement.unread ? <span className="connect-unread-dot" /> : null}
-      </span>
-      <span className="announcement-card-group">
-        {announcement.author} · {announcement.groupName}
-      </span>
-      <span className="announcement-card-preview">{announcement.preview}</span>
-      {announcement.eventDate || announcement.attachment ? (
-        <span className="announcement-card-meta-row">
-          {announcement.eventDate ? (
-            <span className="announcement-card-meta">
-              <Calendar className="announcement-card-meta-icon" aria-hidden />
-              {formatShortDate(announcement.eventDate)}
-            </span>
-          ) : null}
-          {announcement.attachment ? (
-            <span className="announcement-card-meta">
-              <FileText className="announcement-card-meta-icon" aria-hidden />
-              {announcement.attachment.extension}
-            </span>
-          ) : null}
-        </span>
-      ) : null}
-    </button>
-  )
-}
+    <>
+      <AnnouncementFilters
+        searchQuery={searchQuery}
+        typeFilter={typeFilter}
+        scopeFilter={scopeFilter}
+        onSearchChange={onSearchChange}
+        onTypeFilterChange={onTypeFilterChange}
+        onScopeFilterChange={onScopeFilterChange}
+      />
 
-function AnnouncementDetailView({
-  announcement,
-  onBack,
-}: {
-  announcement: Announcement
-  onBack: () => void
-}) {
-  return (
-    <section className="announcement-detail-screen">
-      <header className="chat-header">
-        <button type="button" className="chat-icon-button" onClick={onBack} aria-label="Back to announcements">
-          <ArrowLeft className="chat-icon" aria-hidden />
-        </button>
-        <div className="chat-header-copy">
-          <span className="chat-header-title">{announcement.title}</span>
-          <span className="chat-header-subtitle">{announcement.author}</span>
+      {filteredAnnouncements.length === 0 ? (
+        <EmptyState
+          title="No matching announcements"
+          subtitle="Try adjusting your search or filters"
+        />
+      ) : (
+        <div className="announcement-feed">
+          {filteredAnnouncements.map((announcement) => (
+            <AnnouncementPost key={announcement.id} announcement={announcement} />
+          ))}
         </div>
-      </header>
+      )}
+    </>
+  )
+}
 
-      <article className="announcement-detail">
-        <span className="announcement-type-label">{announcement.kind}</span>
-        <h1 className="announcement-detail-title">{announcement.title}</h1>
-        <p className="announcement-detail-meta">
-          {announcement.author} · {announcement.groupName} · {formatShortDate(announcement.timestamp)}
-        </p>
-        <p className="announcement-detail-body">{announcement.body}</p>
-        {announcement.eventDate ? (
-          <div className="announcement-detail-callout">
-            <Calendar className="announcement-card-meta-icon" aria-hidden />
-            <span>
-              {formatShortDate(announcement.eventDate)}
-              {announcement.eventMeta ? ` · ${announcement.eventMeta}` : ""}
+function AnnouncementPost({ announcement }: { announcement: Announcement }) {
+  const [isExpanded, setIsExpanded] = useState(false)
+  const isKudos = announcement.kind === "kudos" && announcement.kudos
+  const isClamped =
+    !isKudos && announcement.body.length > ANNOUNCEMENT_BODY_CLAMP_THRESHOLD
+
+  return (
+    <article className="announcement-post" data-kind={announcement.kind}>
+      <header className="announcement-post-header">
+        <span className="connect-avatar connect-avatar-small">
+          {authorInitials(announcement.author)}
+        </span>
+        <div className="announcement-post-header-copy">
+          <div className="announcement-post-author-row">
+            <span className="announcement-post-author">{announcement.author}</span>
+            <span className="announcement-post-time">
+              {formatRelativeTime(announcement.timestamp)}
             </span>
           </div>
+          <span className="announcement-post-group">{announcement.groupName}</span>
+        </div>
+        {announcement.unread ? <span className="connect-unread-dot" /> : null}
+      </header>
+
+      <h3 className="announcement-post-title">{announcement.title}</h3>
+
+      {isKudos ? (
+        <div className="announcement-kudos">
+          <div className="announcement-kudos-award">
+            <span className="announcement-kudos-icon" aria-hidden>
+              {announcement.kudos!.awardIcon}
+            </span>
+            <span className="announcement-kudos-recipient">
+              Awarded to {announcement.kudos!.awardedTo}
+            </span>
+          </div>
+          {announcement.kudos!.comment ? (
+            <p className="announcement-kudos-comment">
+              &ldquo;{announcement.kudos!.comment}&rdquo;
+            </p>
+          ) : null}
+        </div>
+      ) : (
+        <>
+          <p
+            className={cx(
+              "announcement-post-body",
+              isClamped && !isExpanded && "announcement-post-body-clamped",
+            )}
+          >
+            {announcement.body}
+          </p>
+
+          {isClamped ? (
+            <button
+              type="button"
+              className="announcement-post-see-more"
+              onClick={() => setIsExpanded((current) => !current)}
+            >
+              {isExpanded ? "See less" : "See more"}
+            </button>
+          ) : null}
+        </>
+      )}
+
+      <footer className="announcement-post-footer">
+        <span
+          className="announcement-type-label"
+          data-kind={announcement.kind}
+        >
+          {announcementKindLabels[announcement.kind]}
+        </span>
+        {announcement.eventDate ? (
+          <span className="announcement-post-meta" data-kind={announcement.kind}>
+            <Calendar className="announcement-post-meta-icon" aria-hidden />
+            {formatShortDate(announcement.eventDate)}
+            {announcement.eventMeta ? ` · ${announcement.eventMeta}` : ""}
+          </span>
         ) : null}
-        {announcement.attachment ? (
-          <AttachmentCard attachment={announcement.attachment} />
-        ) : null}
-      </article>
-    </section>
+      </footer>
+
+      {announcement.attachment ? (
+        <AttachmentCard attachment={announcement.attachment} />
+      ) : null}
+    </article>
   )
 }
 

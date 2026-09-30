@@ -4,6 +4,7 @@ import type { TimetableWeek } from "@/modules/timetable/types"
 import type { Exam, ExamResult } from "@/modules/exams/types"
 import type { Badge } from "@/modules/badges/types"
 import type { LearnSession } from "@/modules/learn/types"
+import type { FeeSummary, PaymentTransaction } from "@/modules/fees/types"
 
 export interface SeedSchema {
   children: Record<string, Child>
@@ -12,5 +13,7 @@ export interface SeedSchema {
   exams: Record<string, Exam[]>
   results: Record<string, ExamResult[]>
   badges: Record<string, Badge[]>
+  fees: FeeSummary
+  feeTransactions: PaymentTransaction[]
   learnSession: Record<string, LearnSession>
 }

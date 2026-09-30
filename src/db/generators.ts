@@ -505,7 +505,7 @@ export function generateSeedData(): SeedSchema {
       [primaryChildId]: {
         id: primaryChildId,
         name: "Aarav Mehta",
-        photoUrl: "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=200&q=80",
+        photoUrl: "/images/aarav-mehta.png",
         class: "Grade 6",
         section: "A",
         rollNumber: "18",
@@ -538,6 +538,190 @@ export function generateSeedData(): SeedSchema {
       [primaryChildId]: buildBadgesForChild(primaryChildId, year),
       [secondaryChildId]: [],
     },
+    fees: {
+      termLabel: "Term 2 2026-2027",
+      dueDate: "2026-08-20",
+      childBalancesPaise: {
+        [primaryChildId]: 2_000_000,
+        [secondaryChildId]: 1_450_000,
+      },
+      outstandingBreakdown: {
+        [primaryChildId]: [
+          { category: "Tuition Fee", amountPaise: 1_500_000 },
+          { category: "Activity Fee", amountPaise: 300_000 },
+          { category: "Transport Fee", amountPaise: 200_000 },
+        ],
+        [secondaryChildId]: [
+          { category: "Tuition Fee", amountPaise: 1_000_000 },
+          { category: "Activity Fee", amountPaise: 250_000 },
+          { category: "Stationery & Resources", amountPaise: 200_000 },
+        ],
+      },
+      termBreakdown: {
+        [primaryChildId]: [
+          {
+            id: "tuition",
+            label: "Tuition",
+            items: [
+              { id: "tuition-grade", label: "Tuition Fee - Grade 6", amountPaise: 1_200_000 },
+              { id: "development-fund", label: "Development Fund", amountPaise: 200_000 },
+              { id: "exams", label: "Exams & Evaluation Charges", amountPaise: 100_000 },
+            ],
+          },
+          {
+            id: "activities",
+            label: "Activities",
+            items: [
+              { id: "lab", label: "Computer & Science Lab Fee", amountPaise: 150_000 },
+              { id: "library-art", label: "Library, Art & Activity Kit", amountPaise: 150_000 },
+            ],
+          },
+          {
+            id: "transport",
+            label: "Transport",
+            items: [
+              { id: "bus", label: "School Bus Transport (Term 2)", amountPaise: 200_000 },
+            ],
+          },
+        ],
+        [secondaryChildId]: [
+          {
+            id: "tuition",
+            label: "Tuition",
+            items: [
+              { id: "tuition-grade", label: "Tuition Fee - Grade 3", amountPaise: 850_000 },
+              { id: "exams", label: "Exams & Evaluation Charges", amountPaise: 150_000 },
+            ],
+          },
+          {
+            id: "activities",
+            label: "Activities",
+            items: [
+              { id: "lab", label: "Computer & Science Lab Fee", amountPaise: 100_000 },
+              { id: "library-sports", label: "Library & Sports Meet", amountPaise: 150_000 },
+            ],
+          },
+          {
+            id: "stationery",
+            label: "Stationery & Resources",
+            items: [
+              { id: "books", label: "Books & Stationery", amountPaise: 150_000 },
+              { id: "development-fund", label: "Development Fund", amountPaise: 50_000 },
+            ],
+          },
+        ],
+      },
+      upcoming: {
+        termLabel: "Term 3 2026-2027",
+        dueDate: "2026-12-15",
+        dueDateText: "Due 15 Dec 2026",
+        childBalancesPaise: {
+          [primaryChildId]: 2_100_000,
+          [secondaryChildId]: 1_500_000,
+        },
+        outstandingBreakdown: {
+          [primaryChildId]: [
+            { category: "Tuition Fee", amountPaise: 1_600_000 },
+            { category: "Activity Fee", amountPaise: 300_000 },
+            { category: "Transport Fee", amountPaise: 200_000 },
+          ],
+          [secondaryChildId]: [
+            { category: "Tuition Fee", amountPaise: 1_100_000 },
+            { category: "Activity Fee", amountPaise: 250_000 },
+            { category: "Stationery & Resources", amountPaise: 150_000 },
+          ],
+        },
+      },
+    },
+    feeTransactions: [
+      {
+        id: "tx_2026_0412",
+        receiptNumber: "REC-2026-0412",
+        childId: primaryChildId,
+        childName: "Aarav Mehta",
+        termLabel: "Term 1 2026-2027",
+        amountPaise: 2_250_000,
+        date: "2026-04-12T10:30:00Z",
+        paymentMethod: "upi",
+        paymentMethodDetails: "UPI (aarav@upi)",
+        paidBy: "Rajesh Mehta (Parent)",
+        status: "successful",
+        breakdown: [
+          { category: "Tuition Fee", amountPaise: 1_800_000 },
+          { category: "Activity Fee", amountPaise: 300_000 },
+          { category: "Transport Fee", amountPaise: 150_000 },
+        ],
+      },
+      {
+        id: "tx_2026_0414",
+        receiptNumber: "REC-2026-0414",
+        childId: secondaryChildId,
+        childName: "Mira Mehta",
+        termLabel: "Term 1 2026-2027",
+        amountPaise: 1_800_000,
+        date: "2026-04-14T15:45:00Z",
+        paymentMethod: "net_banking",
+        paymentMethodDetails: "Net Banking (ICICI Bank - ****4102)",
+        paidBy: "Rajesh Mehta (Parent)",
+        status: "successful",
+        breakdown: [
+          { category: "Tuition Fee", amountPaise: 1_500_000 },
+          { category: "Activity Fee", amountPaise: 200_000 },
+          { category: "Stationery & Resources", amountPaise: 100_000 },
+        ],
+      },
+      {
+        id: "tx_2026_0115_aarav",
+        receiptNumber: "REC-2026-0115-A",
+        childId: primaryChildId,
+        childName: "Aarav Mehta",
+        termLabel: "Annual Fees 2025-2026",
+        amountPaise: 700_000,
+        date: "2026-01-15T09:15:00Z",
+        paymentMethod: "card",
+        paymentMethodDetails: "HDFC Credit Card (****8921)",
+        paidBy: "Priya Mehta (Parent)",
+        status: "successful",
+        breakdown: [
+          { category: "Activity Fee", amountPaise: 400_000 },
+          { category: "Transport Fee", amountPaise: 300_000 },
+        ],
+      },
+      {
+        id: "tx_2026_0115_mira",
+        receiptNumber: "REC-2026-0115-M",
+        childId: secondaryChildId,
+        childName: "Mira Mehta",
+        termLabel: "Annual Fees 2025-2026",
+        amountPaise: 500_000,
+        date: "2026-01-15T09:16:00Z",
+        paymentMethod: "card",
+        paymentMethodDetails: "HDFC Credit Card (****8921)",
+        paidBy: "Priya Mehta (Parent)",
+        status: "successful",
+        breakdown: [
+          { category: "Activity Fee", amountPaise: 300_000 },
+          { category: "Transport Fee", amountPaise: 200_000 },
+        ],
+      },
+      {
+        id: "tx_2025_1102",
+        receiptNumber: "REC-2025-1102",
+        childId: primaryChildId,
+        childName: "Aarav Mehta",
+        termLabel: "Term 3 2025-2026",
+        amountPaise: 2_000_000,
+        date: "2025-11-02T11:20:00Z",
+        paymentMethod: "upi",
+        paymentMethodDetails: "UPI (rajesh@okaxis)",
+        paidBy: "Rajesh Mehta (Parent)",
+        status: "successful",
+        breakdown: [
+          { category: "Tuition Fee", amountPaise: 1_700_000 },
+          { category: "Activity Fee", amountPaise: 300_000 },
+        ],
+      },
+    ],
     learnSession: {
       [primaryChildId]: {
         childId: primaryChildId,

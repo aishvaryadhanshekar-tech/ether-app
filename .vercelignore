@@ -1,0 +1,7 @@
+node_modules
+dist
+.vercel-temp
+$PWD
+*.local
+.DS_Store
+*.log
